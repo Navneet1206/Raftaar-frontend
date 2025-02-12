@@ -29,12 +29,16 @@ const CaptainSignup = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Update form data
+  // Update form data and recalc password strength when needed
   const updateFormData = (e, section = '') => {
     const { name, value } = e.target;
     if (section === 'vehicle' && name === 'type') {
-      // Set capacity based on vehicle type
-      const capacity = value === '4-seater hatchback' ? '4' : value === '4-seater sedan' ? '4' : value === '7-seater SUV' ? '7' : value === '7-seater MUV' ? '7' : '';
+      // Auto-set capacity based on vehicle type
+      const capacity = value === '4-seater hatchback' ? '4'
+        : value === '4-seater sedan' ? '4'
+        : value === '7-seater SUV' ? '7'
+        : value === '7-seater MUV' ? '7'
+        : '';
       setFormData((prev) => ({
         ...prev,
         vehicle: {
@@ -55,7 +59,6 @@ const CaptainSignup = () => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
-    // Password strength calculation
     if (name === 'password') {
       const strength = calculatePasswordStrength(value);
       setPasswordStrength(strength);
@@ -73,27 +76,11 @@ const CaptainSignup = () => {
     return strength;
   };
 
-  // Render password strength indicator
-  const renderPasswordStrengthIndicator = () => {
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-400', 'bg-green-600'];
-    return (
-      <div className="flex space-x-1 mt-1">
-        {[...Array(5)].map((_, index) => (
-          <div
-            key={index}
-            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-200'}`}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  // Handle next step
+  // Step navigation
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
   };
 
-  // Handle previous step
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
   };
@@ -140,42 +127,67 @@ const CaptainSignup = () => {
     }
   };
 
-  // Render step content
+  // Render password strength indicator with Uber-like colors
+  const renderPasswordStrengthIndicator = () => {
+    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-400', 'bg-green-600'];
+    return (
+      <div className="flex space-x-1 mt-1">
+        {[...Array(5)].map((_, index) => (
+          <div
+            key={index}
+            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-700'}`}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  // Render step content with labels for inputs
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
+                <input
+                  required
+                  name="firstName"
+                  type="text"
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={(e) => updateFormData(e)}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
+                <input
+                  required
+                  name="lastName"
+                  type="text"
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={(e) => updateFormData(e)}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
               <input
                 required
-                name="firstName"
-                type="text"
-                placeholder="First Name"
-                value={formData.firstName}
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                value={formData.email}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-              />
-              <input
-                required
-                name="lastName"
-                type="text"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
               />
             </div>
-            <input
-              required
-              name="email"
-              type="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={(e) => updateFormData(e)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-            />
             <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
               <input
                 required
                 name="password"
@@ -183,10 +195,10 @@ const CaptainSignup = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
               />
               {renderPasswordStrengthIndicator()}
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-400 mt-1">
                 Password must be at least 8 characters long
               </p>
             </div>
@@ -194,7 +206,7 @@ const CaptainSignup = () => {
               type="button"
               onClick={nextStep}
               disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.password}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 transition duration-300"
+              className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50 transition duration-300"
             >
               Next
             </button>
@@ -203,37 +215,46 @@ const CaptainSignup = () => {
       case 2:
         return (
           <div className="space-y-6">
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-500">+91</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Mobile Number</label>
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-400">+91</span>
+                <input
+                  required
+                  name="mobileNumber"
+                  type="tel"
+                  placeholder="Mobile Number"
+                  value={formData.mobileNumber}
+                  onChange={(e) => updateFormData(e)}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Driving License Number</label>
               <input
                 required
-                name="mobileNumber"
-                type="tel"
-                placeholder="Mobile Number"
-                value={formData.mobileNumber}
+                name="drivingLicense"
+                type="text"
+                placeholder="Driving License Number"
+                value={formData.drivingLicense}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
               />
             </div>
-            <input
-              required
-              name="drivingLicense"
-              type="text"
-              placeholder="Driving License Number"
-              value={formData.drivingLicense}
-              onChange={(e) => updateFormData(e)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-            />
-            <input
-              type="file"
-              onChange={(e) => setProfilePhoto(e.target.files[0])}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Profile Photo</label>
+              <input
+                type="file"
+                onChange={(e) => setProfilePhoto(e.target.files[0])}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+              />
+            </div>
             <div className="flex space-x-4">
               <button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition duration-300"
+                className="w-1/2 bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-300"
               >
                 Back
               </button>
@@ -241,7 +262,7 @@ const CaptainSignup = () => {
                 type="button"
                 onClick={nextStep}
                 disabled={!formData.mobileNumber || !formData.drivingLicense}
-                className="w-1/2 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 transition duration-300"
+                className="w-1/2 bg-black text-white py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50 transition duration-300"
               >
                 Next
               </button>
@@ -252,55 +273,67 @@ const CaptainSignup = () => {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                required
-                name="color"
-                type="text"
-                placeholder="Vehicle Color"
-                value={formData.vehicle.color}
-                onChange={(e) => updateFormData(e, 'vehicle')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-              />
-              <input
-                required
-                name="plate"
-                type="text"
-                placeholder="Vehicle Plate"
-                value={formData.vehicle.plate}
-                onChange={(e) => updateFormData(e, 'vehicle')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Color</label>
+                <input
+                  required
+                  name="color"
+                  type="text"
+                  placeholder="Vehicle Color"
+                  value={formData.vehicle.color}
+                  onChange={(e) => updateFormData(e, 'vehicle')}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Plate</label>
+                <input
+                  required
+                  name="plate"
+                  type="text"
+                  placeholder="Vehicle Plate"
+                  value={formData.vehicle.plate}
+                  onChange={(e) => updateFormData(e, 'vehicle')}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select
-                required
-                name="type"
-                value={formData.vehicle.type}
-                onChange={(e) => updateFormData(e, 'vehicle')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-              >
-                <option value="">Select Vehicle Type</option>
-                <option value="4-seater hatchback">Hatchback</option>
-                <option value="4-seater sedan">Sedan</option>
-                <option value="7-seater SUV">SUV</option>
-                <option value="7-seater MUV">MUV</option>
-              </select>
-              <div className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-500">
-                Capacity: {formData.vehicle.capacity || 'Auto-filled'} Seats
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Type</label>
+                <select
+                  required
+                  name="type"
+                  value={formData.vehicle.type}
+                  onChange={(e) => updateFormData(e, 'vehicle')}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                >
+                  <option value="">Select Vehicle Type</option>
+                  <option value="4-seater hatchback">Hatchback</option>
+                  <option value="4-seater sedan">Sedan</option>
+                  <option value="7-seater SUV">SUV</option>
+                  <option value="7-seater MUV">MUV</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Capacity</label>
+                <div className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400">
+                  {formData.vehicle.capacity || 'Auto-filled'} Seats
+                </div>
               </div>
             </div>
             <div className="flex space-x-4">
               <button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition duration-300"
+                className="w-1/2 bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-300"
               >
                 Back
               </button>
               <button
                 type="submit"
                 disabled={!formData.vehicle.color || !formData.vehicle.plate || !formData.vehicle.type || isLoading}
-                className="w-1/2 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 transition duration-300"
+                className="w-1/2 bg-black text-white py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50 transition duration-300"
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
@@ -313,21 +346,21 @@ const CaptainSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-black to-gray-800 p-4">
       <ToastContainer />
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <img
             className="w-20 mx-auto mb-4"
             src="https://www.svgrepo.com/show/505031/uber-driver.svg"
             alt="Captain Logo"
           />
-          <h1 className="text-2xl font-bold text-gray-800">Create Captain Account</h1>
+          <h1 className="text-2xl font-bold text-white">Create Captain Account</h1>
           <div className="flex justify-center mt-4">
             {[1, 2, 3].map((step) => (
               <div
                 key={step}
-                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-blue-500' : 'bg-gray-300'}`}
+                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-white' : 'bg-gray-600'}`}
               />
             ))}
           </div>
@@ -337,9 +370,9 @@ const CaptainSignup = () => {
           {renderStepContent()}
         </form>
 
-        <p className="text-center mt-6 text-gray-600">
+        <p className="text-center mt-6 text-gray-400">
           Already have an account?{' '}
-          <Link to="/captain-login" className="text-blue-600 hover:underline">
+          <Link to="/captain-login" className="text-white hover:underline">
             Login here
           </Link>
         </p>
