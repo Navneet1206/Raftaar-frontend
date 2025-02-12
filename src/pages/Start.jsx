@@ -101,6 +101,11 @@ const RideSharingLanding = () => {
                   Become a Driver
                 </button>
               </Link>
+              <Link to="/admin/login">
+                <button className="bg-red-300 text-blue-900 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+                  Become a Driver
+                </button>
+              </Link>
             </div>
           </div>
         </div>
