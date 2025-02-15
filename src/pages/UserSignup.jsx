@@ -22,7 +22,6 @@ const UserSignup = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Update form data and password strength calculation
   const updateFormData = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -33,7 +32,6 @@ const UserSignup = () => {
     }
   };
 
-  // Calculate password strength
   const calculatePasswordStrength = (password) => {
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -44,7 +42,6 @@ const UserSignup = () => {
     return strength;
   };
 
-  // Handle next and previous steps
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
   };
@@ -69,13 +66,6 @@ const UserSignup = () => {
     }
 
     try {
-      console.log("Submitting form data:", {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        mobileNumber: formData.mobileNumber,
-      });
-
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/register`,
         submitFormData,
@@ -98,22 +88,21 @@ const UserSignup = () => {
     }
   };
 
-  // Render password strength indicator with Uber-like colors
+  // Using a grayscale progression for the password strength indicator
   const renderPasswordStrengthIndicator = () => {
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-400', 'bg-green-600'];
+    const colors = ['bg-gray-300', 'bg-gray-400', 'bg-gray-500', 'bg-gray-600', 'bg-black'];
     return (
       <div className="flex space-x-1 mt-1">
         {[...Array(5)].map((_, index) => (
           <div
             key={index}
-            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-700'}`}
+            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-300'}`}
           />
         ))}
       </div>
     );
   };
 
-  // Render step content with labels for each input
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -121,7 +110,7 @@ const UserSignup = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                 <input
                   required
                   name="firstName"
@@ -129,11 +118,11 @@ const UserSignup = () => {
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={updateFormData}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                 <input
                   required
                   name="lastName"
@@ -141,12 +130,12 @@ const UserSignup = () => {
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={updateFormData}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 required
                 name="email"
@@ -154,11 +143,11 @@ const UserSignup = () => {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={updateFormData}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 required
                 name="password"
@@ -166,10 +155,10 @@ const UserSignup = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={updateFormData}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
               {renderPasswordStrengthIndicator()}
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 Password must be at least 8 characters long
               </p>
             </div>
@@ -192,9 +181,9 @@ const UserSignup = () => {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Mobile Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-400">+91</span>
+                <span className="text-gray-700">+91</span>
                 <input
                   required
                   name="mobileNumber"
@@ -202,23 +191,23 @@ const UserSignup = () => {
                   placeholder="Mobile Number"
                   value={formData.mobileNumber}
                   onChange={updateFormData}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Profile Photo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
               <input
                 type="file"
                 onChange={(e) => setProfilePhoto(e.target.files[0])}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
             </div>
             <div className="flex space-x-4">
               <button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-300"
+                className="w-1/2 bg-white text-black border border-black py-2 rounded-lg hover:bg-gray-100 transition duration-300"
               >
                 Back
               </button>
@@ -238,21 +227,21 @@ const UserSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-black to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <ToastContainer />
-      <div className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
           <img
-            className="w-16 mx-auto mb-4"
+            className="w-16 mx-auto mb-4 animate-bounce"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYQy-OIkA6In0fTvVwZADPmFFibjmszu2A0g&s"
             alt="Logo"
           />
-          <h1 className="text-2xl font-bold text-white">Create Account</h1>
+          <h1 className="text-2xl font-bold text-black">Create Account</h1>
           <div className="flex justify-center mt-4">
             {[1, 2].map((step) => (
               <div
                 key={step}
-                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-white' : 'bg-gray-600'}`}
+                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-black' : 'bg-gray-300'}`}
               />
             ))}
           </div>
@@ -262,9 +251,9 @@ const UserSignup = () => {
           {renderStepContent()}
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-6 text-gray-700">
           Already have an account?{' '}
-          <Link to="/login" className="text-white hover:underline">
+          <Link to="/login" className="text-black hover:underline">
             Login here
           </Link>
         </p>

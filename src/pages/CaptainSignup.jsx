@@ -135,7 +135,7 @@ const CaptainSignup = () => {
         {[...Array(5)].map((_, index) => (
           <div
             key={index}
-            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-700'}`}
+            className={`h-1 w-full rounded ${index < passwordStrength ? colors[index] : 'bg-gray-300'}`}
           />
         ))}
       </div>
@@ -150,7 +150,7 @@ const CaptainSignup = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                 <input
                   required
                   name="firstName"
@@ -158,11 +158,11 @@ const CaptainSignup = () => {
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={(e) => updateFormData(e)}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                 <input
                   required
                   name="lastName"
@@ -170,12 +170,12 @@ const CaptainSignup = () => {
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={(e) => updateFormData(e)}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 required
                 name="email"
@@ -183,11 +183,11 @@ const CaptainSignup = () => {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 required
                 name="password"
@@ -195,10 +195,10 @@ const CaptainSignup = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
               {renderPasswordStrengthIndicator()}
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 Password must be at least 8 characters long
               </p>
             </div>
@@ -216,9 +216,9 @@ const CaptainSignup = () => {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Mobile Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-400">+91</span>
+                <span className="text-gray-700">+91</span>
                 <input
                   required
                   name="mobileNumber"
@@ -226,12 +226,12 @@ const CaptainSignup = () => {
                   placeholder="Mobile Number"
                   value={formData.mobileNumber}
                   onChange={(e) => updateFormData(e)}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Driving License Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Driving License Number</label>
               <input
                 required
                 name="drivingLicense"
@@ -239,22 +239,22 @@ const CaptainSignup = () => {
                 placeholder="Driving License Number"
                 value={formData.drivingLicense}
                 onChange={(e) => updateFormData(e)}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Profile Photo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
               <input
                 type="file"
                 onChange={(e) => setProfilePhoto(e.target.files[0])}
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
               />
             </div>
             <div className="flex space-x-4">
               <button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-300"
+                className="w-1/2 bg-gray-300 text-black py-2 rounded-lg hover:bg-gray-200 transition duration-300"
               >
                 Back
               </button>
@@ -274,7 +274,7 @@ const CaptainSignup = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Color</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Color</label>
                 <input
                   required
                   name="color"
@@ -282,11 +282,11 @@ const CaptainSignup = () => {
                   placeholder="Vehicle Color"
                   value={formData.vehicle.color}
                   onChange={(e) => updateFormData(e, 'vehicle')}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Plate</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Plate</label>
                 <input
                   required
                   name="plate"
@@ -294,19 +294,19 @@ const CaptainSignup = () => {
                   placeholder="Vehicle Plate"
                   value={formData.vehicle.plate}
                   onChange={(e) => updateFormData(e, 'vehicle')}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Type</label>
                 <select
                   required
                   name="type"
                   value={formData.vehicle.type}
                   onChange={(e) => updateFormData(e, 'vehicle')}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
                 >
                   <option value="">Select Vehicle Type</option>
                   <option value="4-seater hatchback">Hatchback</option>
@@ -316,8 +316,8 @@ const CaptainSignup = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Capacity</label>
-                <div className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Capacity</label>
+                <div className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700">
                   {formData.vehicle.capacity || 'Auto-filled'} Seats
                 </div>
               </div>
@@ -326,7 +326,7 @@ const CaptainSignup = () => {
               <button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition duration-300"
+                className="w-1/2 bg-gray-300 text-black py-2 rounded-lg hover:bg-gray-200 transition duration-300"
               >
                 Back
               </button>
@@ -346,21 +346,21 @@ const CaptainSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-black to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <ToastContainer />
-      <div className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
           <img
-            className="w-20 mx-auto mb-4"
+            className="w-20 mx-auto mb-4 animate-bounce"
             src="https://www.svgrepo.com/show/505031/uber-driver.svg"
             alt="Captain Logo"
           />
-          <h1 className="text-2xl font-bold text-white">Create Captain Account</h1>
+          <h1 className="text-2xl font-bold text-black">Create Captain Account</h1>
           <div className="flex justify-center mt-4">
             {[1, 2, 3].map((step) => (
               <div
                 key={step}
-                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-white' : 'bg-gray-600'}`}
+                className={`w-8 h-1 mx-1 rounded-full ${currentStep === step ? 'bg-black' : 'bg-gray-300'}`}
               />
             ))}
           </div>
@@ -370,9 +370,9 @@ const CaptainSignup = () => {
           {renderStepContent()}
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-6 text-gray-700">
           Already have an account?{' '}
-          <Link to="/captain-login" className="text-white hover:underline">
+          <Link to="/captain-login" className="text-black hover:underline">
             Login here
           </Link>
         </p>

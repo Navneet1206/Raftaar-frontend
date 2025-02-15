@@ -2,109 +2,99 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../context/UserContext';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners'; // For loading spinner
-import { toast, ToastContainer } from 'react-toastify'; // For popup messages
-import 'react-toastify/dist/ReactToastify.css'; // CSS for toast notifications
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
-  const { user, setUser } = useContext(UserDataContext);
+  const { setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
-    const userData = {
-      email: email,
-      password: password,
-    };
+    const userData = { email, password };
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/login`,
-        userData
-      );
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData);
 
       if (response.status === 200) {
         const data = response.data;
         setUser(data.user);
         localStorage.setItem('token', data.token);
-        toast.success('Login successful! Redirecting...'); // Success popup
+        toast.success('Login successful! Redirecting...');
         setTimeout(() => {
           navigate('/home');
-        }, 2000); // Redirect after 2 seconds
+        }, 2000);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.'); // Error popup
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
       setEmail('');
       setPassword('');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-black to-gray-800 p-4">
-      <div className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
           <img
             className="w-16 mx-auto mb-4 animate-bounce"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYQy-OIkA6In0fTvVwZADPmFFibjmszu2A0g&s"
             alt="Logo"
           />
-          <h1 className="text-2xl font-bold text-white">User Login</h1>
-          <p className="text-gray-400">Welcome back! Please log in to continue.</p>
+          <h1 className="text-2xl font-bold text-black">User Login</h1>
+          <p className="text-gray-600">Welcome back! Please log in to continue.</p>
         </div>
 
         <form onSubmit={submitHandler} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               required
               type="email"
               placeholder="email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-white focus:border-white transition duration-300"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-black focus:border-black transition duration-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               required
               type="password"
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-white focus:border-white transition duration-300"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-black focus:border-black transition duration-300"
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading} // Disable button when loading
-            className="w-full bg-gradient-to-r from-black to-gray-800 text-white font-semibold py-2 rounded-lg hover:from-gray-800 hover:to-gray-700 transition duration-300 flex items-center justify-center"
+            disabled={loading}
+            className="w-full bg-black text-white font-semibold py-2 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center"
           >
             {loading ? (
-              <ClipLoader size={20} color="#ffffff" /> // Loading spinner
+              <ClipLoader size={20} color="#ffffff" />
             ) : (
               'Login'
             )}
           </button>
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-6 text-gray-700">
           New here?{' '}
-          <Link to="/signup" className="text-white hover:underline">
+          <Link to="/signup" className="text-black hover:underline">
             Create new Account
           </Link>
         </p>

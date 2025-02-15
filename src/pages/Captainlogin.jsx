@@ -48,63 +48,59 @@ const Captainlogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-black to-gray-800 p-4">
-      <div className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
           <img
             className="w-20 mx-auto mb-4 animate-bounce"
             src="https://www.svgrepo.com/show/505031/uber-driver.svg"
             alt="Captain Logo"
           />
-          <h1 className="text-2xl font-bold text-white">Captain Login</h1>
-          <p className="text-gray-400">Welcome back! Please log in to continue.</p>
+          <h1 className="text-2xl font-bold text-black">Captain Login</h1>
+          <p className="text-gray-700">Welcome back! Please log in to continue.</p>
         </div>
 
         <form onSubmit={submitHandler} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               required
               type="email"
               placeholder="email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-white focus:border-white transition duration-300"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-black transition duration-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               required
               type="password"
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-white focus:border-white transition duration-300"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-black transition duration-300"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading} // Disable button when loading
-            className="w-full bg-gradient-to-r from-black to-gray-800 text-white font-semibold py-2 rounded-lg hover:from-gray-800 hover:to-gray-700 transition duration-300 flex items-center justify-center"
+            className="w-full bg-black text-white font-semibold py-2 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center"
           >
             {loading ? (
-              <ClipLoader size={20} color="#ffffff" /> // Loading spinner
+              <ClipLoader size={20} color="#ffffff" />
             ) : (
               'Login'
             )}
           </button>
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-6 text-gray-700">
           Join a fleet?{' '}
-          <Link to="/captain-signup" className="text-white hover:underline">
+          <Link to="/captain-signup" className="text-black hover:underline">
             Register as a Captain
           </Link>
         </p>
