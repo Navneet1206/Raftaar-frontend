@@ -195,14 +195,6 @@ const UserSignup = () => {
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
-              <input
-                type="file"
-                onChange={(e) => setProfilePhoto(e.target.files[0])}
-                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black transition duration-300"
-              />
-            </div>
             <div className="flex space-x-4">
               <button
                 type="button"
