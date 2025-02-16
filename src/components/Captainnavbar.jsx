@@ -52,7 +52,7 @@ const Captainnavbar = () => {
           <div className="flex-shrink-0 flex items-center">
             <h1 className={`text-xl font-bold transition-colors duration-500
               ${isScrolled ? currentTheme.scrolledText : currentTheme.text}`}>
-              Admin Panel
+              Captain
             </h1>
           </div>
 

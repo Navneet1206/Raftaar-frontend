@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const ConfirmRide = (props) => {
   const [rideDate, setRideDate] = useState("");
   const [rideTime, setRideTime] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
@@ -12,130 +11,99 @@ const ConfirmRide = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
-  const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY; // ✅ Load Razorpay Key from .env
+  const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY;
+
+  // Preload Razorpay script (optional, for speed)
+  useEffect(() => {
+    if (!window.Razorpay) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
   const handleConfirmRide = async () => {
     if (!rideDate || !rideTime) {
-        setShowValidationModal(true);
-        return;
+      setShowValidationModal(true);
+      return;
     }
-
     setIsSubmitting(true);
+
     const rideData = {
-        pickup: props.pickup,
-        destination: props.destination,
-        vehicleType: props.vehicleType,
-        fare: props.fare[props.vehicleType],
-        rideDate,
-        rideTime,
-        paymentType: paymentMethod,
+      pickup: props.pickup,
+      destination: props.destination,
+      vehicleType: props.vehicleType,
+      fare: props.fare[props.vehicleType],
+      rideDate,
+      rideTime,
+      paymentType: paymentMethod,
     };
 
     try {
-        // ✅ Step 1: Ride Create API Call
-        const createResponse = await axios.post(`${baseUrl}/rides/create`, rideData, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-
-        const rideId = createResponse.data.ride._id;
-
-        // ✅ Step 2: Payment Handling
-        if (paymentMethod === "online") {
-            // ✅ Load Razorpay Script First
-            const loadRazorpayScript = () => {
-                return new Promise((resolve) => {
-                    if (window.Razorpay) {
-                        resolve(true); // Already loaded
-                        return;
-                    }
-                    const script = document.createElement("script");
-                    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-                    script.onload = () => {
-                        console.log("✅ Razorpay script loaded");
-                        resolve(true);
-                    };
-                    script.onerror = () => {
-                        console.log("❌ Razorpay script failed to load");
-                        resolve(false);
-                    };
-                    document.body.appendChild(script);
-                });
-            };
-
-            const scriptLoaded = await loadRazorpayScript();
-            if (!scriptLoaded) {
-                setErrorMessage("Razorpay SDK failed to load. Please check your internet connection.");
-                setShowErrorModal(true);
-                return;
-            }
-
-            // 🛠 Razorpay Order Creation
-            const { data } = await axios.post(`${baseUrl}/payments/create-order`, {
-                amount: props.fare[props.vehicleType],
-                rideId,
-            });
-
-            console.log("✅ Order Created:", data);
-
-            // 🚀 Razorpay Checkout
-            const options = {
-                key: razorpayKey,
-                amount: data.amount,
-                currency: data.currency,
-                order_id: data.id,
-                name: "My Ride App",
-                description: "Ride Payment",
-                handler: async function (response) {
-                    console.log("✅ Payment Successful:", response);
-                    await axios.post(`${baseUrl}/payments/verify-payment`, {
-                        rideId,
-                        orderId: data.id,
-                        transactionId: response.razorpay_payment_id,
-                    });
-
-                    confirmRideAPI(rideId);
-                },
-                prefill: {
-                    name: "Navneet Vishwakarma", // Can be dynamic
-                    email: "rajvl132011@gmail.com", // Can be dynamic
-                    contact: "+91 8435061006", // Can be dynamic
-                },
-                theme: {
-                    color: "#3399cc",
-                },
-            };
-
-            const rzp1 = new window.Razorpay(options);
-            rzp1.open();
-        } else {
-            // ✅ Cash Payment Case
-            confirmRideAPI(rideId);
-        }
-    } catch (error) {
-        handleError(error);
-    } finally {
-        setIsSubmitting(false);
-    }
-};
-
-
-  // ✅ Ride Confirm API
-  const confirmRideAPI = async (rideId) => {
-    try {
-      await axios.post(`${baseUrl}/rides/confirm`, { rideId, paymentType: paymentMethod }, {
+      // Step 1: Create ride
+      const createResponse = await axios.post(`${baseUrl}/rides/create`, rideData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+      const rideId = createResponse.data.ride._id;
 
-      setShowSuccess(true);
-      props.onRideConfirmed && props.onRideConfirmed();
-      setTimeout(() => {
-        props.resetFlow && props.resetFlow();
-      }, 2000);
+      // Step 2: Payment
+      if (paymentMethod === "online") {
+        // If script not loaded
+        if (!window.Razorpay) {
+          setErrorMessage("Razorpay SDK failed to load. Please check your internet connection.");
+          setShowErrorModal(true);
+          return;
+        }
+        const { data } = await axios.post(`${baseUrl}/payments/create-order`, {
+          amount: props.fare[props.vehicleType],
+          rideId,
+        });
+        const options = {
+          key: razorpayKey,
+          amount: data.amount,
+          currency: data.currency,
+          order_id: data.id,
+          name: "My Ride App",
+          description: "Ride Payment",
+          handler: async function (response) {
+            await axios.post(`${baseUrl}/payments/verify-payment`, {
+              rideId,
+              orderId: data.id,
+              transactionId: response.razorpay_payment_id,
+            });
+            confirmRideAPI(rideId);
+          },
+        };
+        const rzp1 = new window.Razorpay(options);
+        rzp1.open();
+      } else {
+        // Cash Payment
+        confirmRideAPI(rideId);
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Step 3: Confirm the ride in backend
+  const confirmRideAPI = async (rideId) => {
+    try {
+      await axios.post(
+        `${baseUrl}/rides/confirm`,
+        { rideId, paymentType: paymentMethod },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+
+      // Instead of local success, call parent callback
+      props.onConfirmRideSuccess && props.onConfirmRideSuccess({ rideId });
     } catch (error) {
       handleError(error);
     }
   };
 
-  // ❌ Handle Errors
   const handleError = (error) => {
     const errorMsg =
       error.response?.data?.message ||
@@ -146,19 +114,9 @@ const ConfirmRide = (props) => {
     setShowErrorModal(true);
   };
 
-  // ✅ Success Message
-  if (showSuccess) {
-    return (
-      <div className="bg-green-100 p-6 rounded-lg text-center animate-fade-in">
-        <h2 className="text-3xl font-bold text-green-800 mb-4">Congratulations! 🎉</h2>
-        <p className="text-green-700">Your ride has been successfully confirmed.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white p-4 rounded-lg shadow relative">
-      {/* ✅ Error Modal */}
+      {/* Error Modal */}
       {showErrorModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-sm mx-4">
@@ -174,7 +132,7 @@ const ConfirmRide = (props) => {
         </div>
       )}
 
-      {/* ✅ Validation Modal */}
+      {/* Validation Modal */}
       {showValidationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-sm mx-4">
@@ -192,23 +150,20 @@ const ConfirmRide = (props) => {
 
       <h3 className="text-2xl font-semibold mb-5 text-center">Confirm your Ride</h3>
       <div className="w-full">
-        {/* 🏁 Pickup Location */}
         <div className="p-3 border-b-2">
           <h3 className="text-lg font-medium">{props.pickup}</h3>
           <p className="text-sm text-gray-600">Pickup Location</p>
         </div>
-        {/* 🏁 Destination */}
         <div className="p-3 border-b-2">
           <h3 className="text-lg font-medium">{props.destination}</h3>
           <p className="text-sm text-gray-600">Drop-off Location</p>
         </div>
-        {/* 💰 Fare & Vehicle Type */}
         <div className="p-3 border-b-2">
           <h3 className="text-lg font-medium">₹{props.fare[props.vehicleType]}</h3>
           <p className="text-sm text-gray-600">{props.vehicleType}</p>
         </div>
 
-        {/* 💳 Payment Method */}
+        {/* Payment Method */}
         <div className="p-3 border-b-2">
           <label className="block text-sm font-medium mb-2">Payment Method</label>
           <div className="flex gap-4">
@@ -235,7 +190,7 @@ const ConfirmRide = (props) => {
           </div>
         </div>
 
-        {/* 📆 Date & Time Input */}
+        {/* Date & Time */}
         <div className="p-3">
           <label className="text-gray-600 text-sm">Select Ride Date:</label>
           <input
@@ -257,10 +212,9 @@ const ConfirmRide = (props) => {
         </div>
       </div>
 
-      {/* 🚀 Confirm Ride Button */}
       <button
         onClick={handleConfirmRide}
-        disabled={isSubmitting}
+        disabled={isSubmitting || props.buttonDisabled}
         className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg hover:bg-green-700"
       >
         {isSubmitting ? "Confirming..." : "Confirm Ride"}
