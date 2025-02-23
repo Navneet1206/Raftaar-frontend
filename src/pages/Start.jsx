@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Car, Shield, Clock, MapPin, Phone } from 'lucide-react';
+import { Car, Shield, Clock } from 'lucide-react';
 import Navbar from '../components/Landing/Navbar';
 import Input from '../components/Landing/Input';
 import Button from '../components/Landing/Button';
@@ -13,7 +13,7 @@ import TestimonialCard from '../components/Landing/TestimonialCard';
 import FloatingBooking from '../components/Landing/FloatingBooking';
 import ScrollToTop from '../components/Landing/ScrollToTop';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Start() {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ function Start() {
       <Navbar onNavigate={scrollToSection} />
       <FloatingBooking />
       <ScrollToTop />
-      
+    
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center pt-16">
         <HeroBackground />
@@ -105,22 +105,26 @@ function Start() {
               </p>
               <div className="flex gap-4">
                 <motion.div whileHover={{ scale: 1.05 }}>
+                 <Link to="/login">
                   <Button 
                     variant="primary" 
                     size="lg"
                     onClick={() => scrollToSection('services')}
                   >
-                    Our Services
+                    Make Ride
                   </Button>
+                    </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }}>
+                  <Link to="/login">
                   <Button 
                     variant="outline" 
                     size="lg"
                     onClick={() => scrollToSection('contact')}
-                  >
-                    Contact Us
+                    >
+                    Join as Captain
                   </Button>
+                    </Link>
                 </motion.div>
               </div>
             </FadeInSection>
@@ -197,7 +201,7 @@ function Start() {
       </AnimatedSection>
 
       {/* Contact Section */}
-      <AnimatedSection id="contact" className="py-20 bg-gray-50">
+      {/* <AnimatedSection id="contact" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-black rounded-2xl overflow-hidden">
             <div className="grid md:grid-cols-2">
@@ -238,7 +242,7 @@ function Start() {
             </div>
           </div>
         </div>
-      </AnimatedSection>
+      </AnimatedSection> */}
 
       {/* Footer */}
       <footer className="bg-black text-white py-12">
