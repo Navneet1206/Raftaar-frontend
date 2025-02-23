@@ -189,9 +189,7 @@ const Home = () => {
   const getPreviousStep = () => {
     if (currentStep === 'vehicle') return 'input';
     if (currentStep === 'confirm') return 'vehicle';
-    if (currentStep === 'confirmed') {
-      return 'input';
-    }
+    if (currentStep === 'confirmed') return 'input';
     return null;
   };
 
@@ -221,6 +219,7 @@ const Home = () => {
   return (
     <>
       <style>{`
+        /* Slide animations for CSSTransition */
         .slide-enter {
           opacity: 0;
           transform: translateY(20%);
@@ -239,22 +238,45 @@ const Home = () => {
           transform: translateY(20%);
           transition: all 300ms ease-out;
         }
+        
+        /* Additional Animations */
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-in-out;
+        }
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        .animate-pulse {
+          animation: pulse 1.5s infinite;
+        }
+        @keyframes modal-zoom {
+          from { transform: scale(0.8); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .animate-modal {
+          animation: modal-zoom 0.3s ease-out;
+        }
       `}</style>
-
       <Usersnavbar />
-      <div className="min-h-screen overflow-y-auto">
+      <div className="min-h-screen bg-gray-100 text-gray-800 overflow-y-auto">
         {/* Map always visible */}
         <div style={{ height: '50vh' }}>
           <LiveTracking sourceCoords={sourceCoords} destinationCoords={destinationCoords} />
         </div>
 
         {/* Bottom Panel */}
-        <div style={{ minHeight: '40vh' }} className="p-6 bg-white relative">
+        <div style={{ minHeight: '40vh' }} className="p-6 bg-gray-200 relative">
           {/* Back Icon */}
           {currentStep !== 'input' && (
             <button
               onClick={handleBack}
-              className="absolute top-4 left-4 text-xl text-gray-600 hover:text-black z-[60]"
+              className="absolute top-4 left-4 text-xl text-gray-600 hover:text-gray-700 z-[60]"
               title="Go Back"
             >
               <FaArrowLeft />
@@ -263,8 +285,8 @@ const Home = () => {
 
           {/* Loader Overlay */}
           {isLoading && (
-            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-              <div className="text-xl font-semibold">Loading...</div>
+            <div className="absolute inset-0 bg-gray-300 bg-opacity-75 flex items-center justify-center z-50">
+              <div className="text-xl font-semibold text-gray-800 animate-pulse">Loading...</div>
             </div>
           )}
 
@@ -273,7 +295,7 @@ const Home = () => {
               {/* Step: input */}
               {currentStep === 'input' && (
                 <>
-                  <h4 className="text-2xl font-semibold mb-3">Find a trip</h4>
+                  <h4 className="text-2xl font-semibold mb-3 animate-fade-in">Find a trip</h4>
                   <form className="relative pb-3" onSubmit={submitHandler}>
                     {/* Pickup Input */}
                     <div className="relative mb-3">
@@ -281,7 +303,7 @@ const Home = () => {
                         onClick={() => setActiveField('pickup')}
                         value={pickup}
                         onChange={handlePickupChange}
-                        className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
+                        className="bg-gray-300 text-gray-800 px-12 py-2 text-lg rounded-lg w-full focus:ring-2 focus:ring-blue-500 transition-all"
                         type="text"
                         placeholder="Add a pick-up location"
                       />
@@ -314,7 +336,7 @@ const Home = () => {
                             alert('Geolocation is not supported by this browser.');
                           }
                         }}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-700 animate-pulse"
                       >
                         <FaLocationArrow className="text-xl" />
                       </button>
@@ -335,7 +357,7 @@ const Home = () => {
                         onClick={() => setActiveField('destination')}
                         value={destination}
                         onChange={handleDestinationChange}
-                        className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
+                        className="bg-gray-300 text-gray-800 px-12 py-2 text-lg rounded-lg w-full focus:ring-2 focus:ring-blue-500 transition-all"
                         type="text"
                         placeholder="Enter your destination"
                       />
@@ -353,7 +375,7 @@ const Home = () => {
                     <button
                       type="button"
                       onClick={findTrip}
-                      className="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-3 w-full hover:bg-blue-700 transition-all"
                     >
                       Find Trip
                     </button>
@@ -387,10 +409,10 @@ const Home = () => {
 
               {/* Step: confirmed */}
               {currentStep === 'confirmed' && (
-                <div className="bg-green-100 p-6 rounded-lg text-center">
+                <div className="bg-green-500 p-6 rounded-lg text-center text-white animate-fade-in">
                   <h2 className="text-3xl font-bold mb-4">Congratulations!</h2>
                   <p className="mb-4">Your ride has been confirmed.</p>
-                  <button onClick={resetFlow} className="bg-green-600 text-white px-4 py-2 rounded-lg">
+                  <button onClick={resetFlow} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
                     OK
                   </button>
                 </div>
@@ -402,13 +424,17 @@ const Home = () => {
 
       {/* Back Confirmation Modal */}
       {showBackConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-75 z-50">
+          <div className="bg-gray-200 rounded-lg p-6 max-w-sm mx-4 animate-modal">
             <h3 className="text-xl font-semibold mb-4">Are you sure you want to go back?</h3>
             <p className="mb-4 text-gray-600">Your current progress will be lost.</p>
             <div className="flex justify-end gap-4">
-              <button onClick={cancelBack} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">No</button>
-              <button onClick={confirmBack} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Yes</button>
+              <button onClick={cancelBack} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
+                No
+              </button>
+              <button onClick={confirmBack} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                Yes
+              </button>
             </div>
           </div>
         </div>

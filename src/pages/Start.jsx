@@ -116,7 +116,7 @@ function Start() {
                     </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <Link to="/login">
+                  <Link to="/captain-login">
                   <Button 
                     variant="outline" 
                     size="lg"

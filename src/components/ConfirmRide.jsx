@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaCalendarAlt, FaClock } from "react-icons/fa";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ConfirmRide = (props) => {
-  const [rideDate, setRideDate] = useState("");
-  const [rideTime, setRideTime] = useState("");
+  // Store selected dates as Date objects
+  const [rideDate, setRideDate] = useState(null);
+  const [rideTime, setRideTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
@@ -23,6 +27,20 @@ const ConfirmRide = (props) => {
     }
   }, []);
 
+  // Format date to YYYY-MM-DD and time to HH:MM
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date) => {
+    const hours = `${date.getHours()}`.padStart(2, "0");
+    const minutes = `${date.getMinutes()}`.padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   const handleConfirmRide = async () => {
     if (!rideDate || !rideTime) {
       setShowValidationModal(true);
@@ -35,23 +53,26 @@ const ConfirmRide = (props) => {
       destination: props.destination,
       vehicleType: props.vehicleType,
       fare: props.fare[props.vehicleType],
-      rideDate,
-      rideTime,
+      rideDate: formatDate(rideDate),
+      rideTime: formatTime(rideTime),
       paymentType: paymentMethod,
     };
 
     try {
       // Step 1: Create ride
-      const createResponse = await axios.post(`${baseUrl}/rides/create`, rideData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const createResponse = await axios.post(
+        `${baseUrl}/rides/create`,
+        rideData,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
       const rideId = createResponse.data.ride._id;
 
       // Step 2: Payment
       if (paymentMethod === "online") {
-        // If script not loaded
         if (!window.Razorpay) {
-          setErrorMessage("Razorpay SDK failed to load. Please check your internet connection.");
+          setErrorMessage(
+            "Razorpay SDK failed to load. Please check your internet connection."
+          );
           setShowErrorModal(true);
           return;
         }
@@ -88,7 +109,6 @@ const ConfirmRide = (props) => {
     }
   };
 
-  // Step 3: Confirm the ride in backend
   const confirmRideAPI = async (rideId) => {
     try {
       await axios.post(
@@ -96,8 +116,6 @@ const ConfirmRide = (props) => {
         { rideId, paymentType: paymentMethod },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-
-      // Instead of local success, call parent callback
       props.onConfirmRideSuccess && props.onConfirmRideSuccess({ rideId });
     } catch (error) {
       handleError(error);
@@ -120,7 +138,9 @@ const ConfirmRide = (props) => {
       {showErrorModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-sm mx-4">
-            <h3 className="text-xl font-semibold mb-2 text-red-600">Booking Failed</h3>
+            <h3 className="text-xl font-semibold mb-2 text-red-600">
+              Booking Failed
+            </h3>
             <p className="text-gray-600 mb-4">{errorMessage}</p>
             <button
               onClick={() => setShowErrorModal(false)}
@@ -136,8 +156,12 @@ const ConfirmRide = (props) => {
       {showValidationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-sm mx-4">
-            <h3 className="text-xl font-semibold mb-2">Date and Time Required</h3>
-            <p className="text-gray-600 mb-4">Please select both a date and time for your ride.</p>
+            <h3 className="text-xl font-semibold mb-2">
+              Date and Time Required
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Please select both a date and time for your ride.
+            </p>
             <button
               onClick={() => setShowValidationModal(false)}
               className="w-full bg-blue-600 text-white font-semibold p-2 rounded-lg hover:bg-blue-700"
@@ -148,7 +172,9 @@ const ConfirmRide = (props) => {
         </div>
       )}
 
-      <h3 className="text-2xl font-semibold mb-5 text-center">Confirm your Ride</h3>
+      <h3 className="text-2xl font-semibold mb-5 text-center">
+        Confirm your Ride
+      </h3>
       <div className="w-full">
         <div className="p-3 border-b-2">
           <h3 className="text-lg font-medium">{props.pickup}</h3>
@@ -165,7 +191,9 @@ const ConfirmRide = (props) => {
 
         {/* Payment Method */}
         <div className="p-3 border-b-2">
-          <label className="block text-sm font-medium mb-2">Payment Method</label>
+          <label className="block text-sm font-medium mb-2">
+            Payment Method
+          </label>
           <div className="flex gap-4">
             <label className="flex items-center gap-2">
               <input
@@ -192,30 +220,52 @@ const ConfirmRide = (props) => {
 
         {/* Date & Time */}
         <div className="p-3">
-          <label className="text-gray-600 text-sm">Select Ride Date:</label>
-          <input
-            className="border p-2 rounded w-full"
-            type="date"
-            value={rideDate}
-            onChange={(e) => setRideDate(e.target.value)}
-            min={new Date().toISOString().split("T")[0]}
-            required
-          />
-          <label className="text-gray-600 text-sm mt-2">Select Ride Time:</label>
-          <input
-            className="border p-2 rounded w-full"
-            type="time"
-            value={rideTime}
-            onChange={(e) => setRideTime(e.target.value)}
-            required
-          />
+          <div className="mb-4">
+            <label className="block text-gray-600 text-sm font-medium mb-1">
+              Select Ride Date:
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+                <FaCalendarAlt className="text-gray-500" />
+              </span>
+              <ReactDatePicker
+                selected={rideDate}
+                onChange={(date) => setRideDate(date)}
+                minDate={new Date()}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select ride date"
+                className="border border-gray-300 pl-10 pr-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-gray-600 text-sm font-medium mb-1">
+              Select Ride Time:
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+                <FaClock className="text-gray-500" />
+              </span>
+              <ReactDatePicker
+                selected={rideTime}
+                onChange={(time) => setRideTime(time)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={15}
+                timeCaption="Time"
+                dateFormat="HH:mm"
+                placeholderText="Select ride time"
+                className="border border-gray-300 pl-10 pr-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       <button
         onClick={handleConfirmRide}
         disabled={isSubmitting || props.buttonDisabled}
-        className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg hover:bg-green-700"
+        className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg hover:bg-green-700 transition-all"
       >
         {isSubmitting ? "Confirming..." : "Confirm Ride"}
       </button>
