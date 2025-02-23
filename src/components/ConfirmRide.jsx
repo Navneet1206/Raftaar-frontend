@@ -256,4 +256,3 @@ const ConfirmRide = (props) => {
 };
 
 export default ConfirmRide;
-x
