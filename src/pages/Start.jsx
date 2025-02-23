@@ -1,334 +1,300 @@
-import React, { useState } from 'react';
-import { Car, Shield, Clock, MapPin, Star, Phone, CheckCircle, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Car, Shield, Clock, MapPin, Phone } from 'lucide-react';
+import Navbar from '../components/Landing/Navbar';
+import Input from '../components/Landing/Input';
+import Button from '../components/Landing/Button';
+import ServiceCard from '../components/Landing/ServiceCard';
+import AnimatedSection from '../components/Landing/AnimatedSection';
+import FadeInSection from '../components/Landing/FadeInSection';
+import ParallaxSection from '../components/Landing/ParallaxSection';
+import HeroBackground from '../components/Landing/HeroBackground';
+import StatsSection from '../components/Landing/StatsSection';
+import TestimonialCard from '../components/Landing/TestimonialCard';
+import FloatingBooking from '../components/Landing/FloatingBooking';
+import ScrollToTop from '../components/Landing/ScrollToTop';
+import { motion } from 'framer-motion';
 
-const Start = () => {
-  // State for the contact form
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  
-  // State for the ride booking form (pickup and destination)
-  const [rideData, setRideData] = useState({
-    pickup: '',
-    destination: ''
-  });
-  
-  const [submitStatus, setSubmitStatus] = useState({ show: false, success: false });
-  const [menuOpen, setMenuOpen] = useState(false);
-
+function Start() {
   const services = [
     {
-      title: "Daily Rides",
-      icon: <Car className="w-10 h-10 mx-auto text-black" />,
-      description: "Comfortable daily commute with professional drivers"
-    },
-    {
       title: "Premium Rides",
-      icon: <Star className="w-10 h-10 mx-auto text-black" />,
-      description: "Luxury vehicles for special occasions and business travel"
+      icon: Car,
+      description: "Luxury vehicles for comfortable travel"
     },
     {
-      title: "Express Pool",
-      icon: <Clock className="w-10 h-10 mx-auto text-black" />,
-      description: "Share your ride and save with Express Pool options"
+      title: "Safe Journey",
+      icon: Shield,
+      description: "Verified drivers and secure rides"
+    },
+    {
+      title: "24/7 Service",
+      icon: Clock,
+      description: "Available round the clock"
     }
   ];
 
-  const stats = [
-    { value: "1M+", label: "Happy Riders" },
-    { value: "50K+", label: "Pro Drivers" },
-    { value: "100+", label: "Cities" },
-    { value: "4.9", label: "Rating" }
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      role: "Business Executive",
+      content: "The best cab service I've ever used. Professional drivers and luxurious cars.",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80",
+      rating: 5
+    },
+    {
+      name: "Michael Chen",
+      role: "Frequent Traveler",
+      content: "Reliable and comfortable. My go-to choice for airport transfers.",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80",
+      rating: 5
+    },
+    {
+      name: "Emily Davis",
+      role: "Corporate Client",
+      content: "Exceptional service and attention to detail. Highly recommended!",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80",
+      rating: 5
+    }
   ];
 
-  // Handler for contact form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Handler for the ride booking form
-  const handleRideChange = (e) => {
-    const { name, value } = e.target;
-    setRideData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleRideSubmit = (e) => {
-    e.preventDefault();
-    // For demonstration, we simply alert the entered values.
-    alert(`Ride booked from ${rideData.pickup} to ${rideData.destination}`);
-    setRideData({ pickup: '', destination: '' });
-  };
-
-  // Handler for contact form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Reset form and show success message
-      setFormData({ name: '', email: '', message: '' });
-      setSubmitStatus({ show: true, success: true });
-      
-      // Hide the message after 3 seconds
-      setTimeout(() => {
-        setSubmitStatus({ show: false, success: false });
-      }, 3000);
-    } catch (error) {
-      setSubmitStatus({ show: true, success: false });
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
-      {/* Navigation */}
-      <header className="bg-black shadow-md fixed w-full z-30">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="text-2xl font-bold text-white">RideShare</Link>
-            <div className="hidden md:flex space-x-8">
-              <a href="#services" className="text-gray-300 hover:text-white transition">Rides</a>
-              <a href="#about" className="text-gray-300 hover:text-white transition">About</a>
-              <a href="#contact" className="text-gray-300 hover:text-white transition">Contact</a>
-            </div>
-            <div className="md:hidden">
-              <button onClick={() => setMenuOpen(!menuOpen)} className="text-gray-300 focus:outline-none">
-                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
-          </div>
-        </div>
-        {menuOpen && (
-          <div className="md:hidden bg-black shadow-md">
-            <div className="px-4 pt-2 pb-4 space-y-2">
-              <a href="#services" className="block text-gray-300 hover:text-white transition">Rides</a>
-              <a href="#about" className="block text-gray-300 hover:text-white transition">About</a>
-              <a href="#contact" className="block text-gray-300 hover:text-white transition">Contact</a>
-            </div>
-          </div>
-        )}
-      </header>
-
+    <div className="min-h-screen">
+      <Navbar onNavigate={scrollToSection} />
+      <FloatingBooking />
+      <ScrollToTop />
+      
       {/* Hero Section */}
-      <section className="pt-16 md:pt-20 bg-gradient-to-r from-black to-gray-800 relative">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse md:flex-row items-center py-12">
-          <div className="w-full md:w-1/2 text-center md:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Your Ride, Your Way</h1>
-            <p className="text-lg sm:text-xl text-white mb-8">
-              Experience safe, reliable, and affordable rides at your fingertips.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link to="/login">
-                <button className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-                  Book a Ride
-                </button>
-              </Link>
-              <Link to="/captain-login">
-                <button className="bg-black text-white border border-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">
-                  Become a Driver
-                </button>
-              </Link>
-              <Link to="/admin/login">
-                <button className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
-                  Admin
-                </button>
-              </Link>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 mb-8 md:mb-0">
-            <div className="bg-white rounded-xl shadow-xl p-6 max-w-md mx-auto">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">Book Your Ride</h2>
-              <form onSubmit={handleRideSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  name="pickup"
-                  placeholder="Pickup Location"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  value={rideData.pickup}
-                  onChange={handleRideChange}
-                  required
-                />
-                <input
-                  type="text"
-                  name="destination"
-                  placeholder="Destination"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  value={rideData.destination}
-                  onChange={handleRideChange}
-                  required
-                />
-                <button type="submit" className="w-full bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-900 transition">
-                  Get Ride
-                </button>
-              </form>
-            </div>
+      <section className="relative min-h-screen flex items-center pt-16">
+        <HeroBackground />
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <FadeInSection direction="left">
+              <h1 className="text-5xl font-bold text-white mb-6">
+                Your Premium Cab Service
+              </h1>
+              <p className="text-xl text-gray-300 mb-8">
+                Experience luxury and comfort with Netwaycab's premium ride service.
+              </p>
+              <div className="flex gap-4">
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Button 
+                    variant="primary" 
+                    size="lg"
+                    onClick={() => scrollToSection('services')}
+                  >
+                    Our Services
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => scrollToSection('contact')}
+                  >
+                    Contact Us
+                  </Button>
+                </motion.div>
+              </div>
+            </FadeInSection>
+            
+            <FadeInSection direction="right" delay={0.2}>
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Book Your Ride</h2>
+                <form className="space-y-4">
+                  <Input
+                    placeholder="Pickup Location"
+                    type="text"
+                    className="bg-white/5 text-white placeholder:text-gray-400"
+                  />
+                  <Input
+                    placeholder="Destination"
+                    type="text"
+                    className="bg-white/5 text-white placeholder:text-gray-400"
+                  />
+                  <motion.div whileHover={{ scale: 1.02 }}>
+                    <Button variant="primary" className="w-full">
+                      Get Estimate
+                    </Button>
+                  </motion.div>
+                </form>
+              </div>
+            </FadeInSection>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="services" className="py-12 bg-white">
+      {/* Stats Section */}
+      <StatsSection />
+
+      {/* Services Section */}
+      <AnimatedSection id="services" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Services</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <ParallaxSection>
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+              Our Services
+            </h2>
+          </ParallaxSection>
+          <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition duration-300">
-                {service.icon}
-                <h3 className="text-xl font-semibold text-center text-gray-800 mt-4">{service.title}</h3>
-                <p className="text-gray-600 text-center mt-2">{service.description}</p>
-              </div>
+              <ServiceCard
+                key={index}
+                {...service}
+                delay={index * 0.2}
+              />
             ))}
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      {/* About Section */}
-      <section id="about" className="py-12 bg-white">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
-          <div className="w-full md:w-1/2">
-            <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-              alt="Professional Driver"
-              className="rounded-xl shadow-lg"
-            />
-          </div>
-          <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">About RideShare</h2>
-            <p className="text-gray-700 mb-6">
-              Founded in 2020, RideShare has revolutionized urban transportation by connecting riders with reliable drivers. Our mission is to make transportation accessible, safe, and comfortable.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg shadow text-center">
-                  <div className="text-2xl font-bold text-black">{stat.value}</div>
-                  <div className="text-gray-600">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+      {/* Testimonials Section */}
+      <AnimatedSection className="py-20 bg-white">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ParallaxSection>
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+              What Our Clients Say
+            </h2>
+          </ParallaxSection>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <FadeInSection key={index} direction="up" delay={index * 0.2}>
+                <TestimonialCard {...testimonial} />
+              </FadeInSection>
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* App Preview Section */}
-      <section className="py-12 bg-black">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
-          <div className="w-full md:w-1/2 text-center md:text-left text-white">
-            <h2 className="text-3xl font-bold mb-4">Download Our App</h2>
-            <p className="mb-6">
-              Enjoy seamless ride-booking with our mobile app available for iOS and Android.
-            </p>
-            <div className="flex justify-center md:justify-start space-x-4">
-              <img 
-                src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&h=50&q=80" 
-                alt="App Store" 
-                className="h-12 rounded-lg"
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&h=50&q=80" 
-                alt="Play Store" 
-                className="h-12 rounded-lg"
-              />
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 mt-8 md:mt-0">
-            <img 
-              src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=600&q=80" 
-              alt="App Preview" 
-              className="mx-auto rounded-3xl shadow-lg"
-            />
-          </div>
-        </div>
-      </section>
+      </AnimatedSection>
 
       {/* Contact Section */}
-      <section id="contact" className="py-12 bg-white">
+      <AnimatedSection id="contact" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gray-50 rounded-xl shadow-lg overflow-hidden">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-1/2 bg-black p-6 flex flex-col justify-center text-white">
-                <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
-                <p className="mb-4">We are here to help you 24/7.</p>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
+          <div className="bg-black rounded-2xl overflow-hidden">
+            <div className="grid md:grid-cols-2">
+              <FadeInSection direction="left" className="p-12 text-white">
+                <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
+                <p className="text-gray-300 mb-8">
+                  Have questions? We're here to help 24/7
+                </p>
+                <div className="space-y-4">
+                  <motion.div 
+                    className="flex items-center gap-3"
+                    whileHover={{ x: 10 }}
+                  >
                     <Phone className="w-5 h-5" />
                     <span>+1 (555) 123-4567</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
+                  </motion.div>
+                  <motion.div 
+                    className="flex items-center gap-3"
+                    whileHover={{ x: 10 }}
+                  >
                     <MapPin className="w-5 h-5" />
-                    <span>123 Ride Street, Transit City</span>
-                  </div>
+                    <span>123 Business Avenue, City</span>
+                  </motion.div>
                 </div>
-              </div>
-              <div className="md:w-1/2 p-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {submitStatus.show && (
-                    <div className={`p-3 rounded flex items-center space-x-2 ${submitStatus.success ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
-                      <CheckCircle className="w-5 h-5" />
-                      <span>{submitStatus.success ? 'Message sent successfully!' : 'Error sending message. Try again.'}</span>
-                    </div>
-                  )}
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Your Name"
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Your Email"
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  />
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Your Message"
-                    required
-                    rows="3"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  ></textarea>
-                  <button type="submit" className="w-full bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-900 transition">
-                    Send Message
-                  </button>
+              </FadeInSection>
+              <FadeInSection direction="right" className="bg-white p-12">
+                <form className="space-y-6">
+                  <Input label="Name" type="text" />
+                  <Input label="Email" type="email" />
+                  <Input label="Phone" type="tel" />
+                  <motion.div whileHover={{ scale: 1.02 }}>
+                    <Button variant="primary" className="w-full">
+                      Send Message
+                    </Button>
+                  </motion.div>
                 </form>
-              </div>
+              </FadeInSection>
             </div>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Footer */}
-      <footer className="bg-black text-white py-6">
+      <footer className="bg-black text-white py-12">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <h3 className="text-xl font-bold">RideShare</h3>
-              <p className="text-gray-400">Your trusted ride-sharing partner</p>
-            </div>
-            <div className="flex space-x-6">
-              <a href="#services" className="text-gray-400 hover:text-white transition">Rides</a>
-              <a href="#about" className="text-gray-400 hover:text-white transition">About</a>
-              <a href="#contact" className="text-gray-400 hover:text-white transition">Contact</a>
-            </div>
+          <div className="grid md:grid-cols-4 gap-8">
+            <FadeInSection direction="up">
+              <h3 className="text-2xl font-bold mb-4">Netwaycab</h3>
+              <p className="text-gray-400">Your premium ride service</p>
+            </FadeInSection>
+            <FadeInSection direction="up" delay={0.1}>
+              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <motion.li whileHover={{ x: 5 }}>
+                  <button 
+                    onClick={() => scrollToSection('services')}
+                    className="text-gray-400 hover:text-white transition"
+                  >
+                    Services
+                  </button>
+                </motion.li>
+                <motion.li whileHover={{ x: 5 }}>
+                  <button 
+                    onClick={() => scrollToSection('contact')}
+                    className="text-gray-400 hover:text-white transition"
+                  >
+                    Contact
+                  </button>
+                </motion.li>
+              </ul>
+            </FadeInSection>
+            <FadeInSection direction="up" delay={0.2}>
+              <h4 className="font-semibold mb-4">Services</h4>
+              <ul className="space-y-2">
+                <motion.li whileHover={{ x: 5 }}>
+                  <button className="text-gray-400 hover:text-white transition">
+                    Premium Rides
+                  </button>
+                </motion.li>
+                <motion.li whileHover={{ x: 5 }}>
+                  <button className="text-gray-400 hover:text-white transition">
+                    Airport Transfer
+                  </button>
+                </motion.li>
+                <motion.li whileHover={{ x: 5 }}>
+                  <button className="text-gray-400 hover:text-white transition">
+                    Corporate Service
+                  </button>
+                </motion.li>
+              </ul>
+            </FadeInSection>
+            <FadeInSection direction="up" delay={0.3}>
+              <h4 className="font-semibold mb-4">Follow Us</h4>
+              <div className="flex space-x-4">
+                <motion.button 
+                  className="text-gray-400 hover:text-white transition"
+                  whileHover={{ y: -3 }}
+                >
+                  Twitter
+                </motion.button>
+                <motion.button 
+                  className="text-gray-400 hover:text-white transition"
+                  whileHover={{ y: -3 }}
+                >
+                  Facebook
+                </motion.button>
+                <motion.button 
+                  className="text-gray-400 hover:text-white transition"
+                  whileHover={{ y: -3 }}
+                >
+                  Instagram
+                </motion.button>
+              </div>
+            </FadeInSection>
           </div>
-          <div className="mt-4 text-center text-gray-500 text-sm">
-            <p>&copy; 2025 RideShare. All rights reserved.</p>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p>&copy; 2025 Netwaycab. All rights reserved.</p>
           </div>
         </div>
       </footer>
     </div>
   );
-};
+}
 
 export default Start;

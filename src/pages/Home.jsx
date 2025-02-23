@@ -60,6 +60,7 @@ const Home = () => {
     };
   }, [socket, navigate]);
 
+  // button pannel
   const handlePickupChange = async (e) => {
     const inputValue = e.target.value;
     setPickup(inputValue);
@@ -102,6 +103,7 @@ const Home = () => {
     }
   };
 
+  //button pannel
   const submitHandler = (e) => {
     e.preventDefault();
   };
@@ -177,7 +179,7 @@ const Home = () => {
     }
     return null;
   };
-
+  // Button pannel
   const handleBack = () => {
     const prevStep = getPreviousStep();
     if (prevStep) {
