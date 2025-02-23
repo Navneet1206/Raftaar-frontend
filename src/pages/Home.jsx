@@ -7,7 +7,7 @@ import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
 import { SocketContext } from '../context/SocketContext';
 import { UserDataContext } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
 import { FaLocationArrow, FaArrowLeft } from 'react-icons/fa';
 import Usersnavbar from '../components/Usersnavbar';
@@ -39,11 +39,28 @@ const Home = () => {
   const [pendingStep, setPendingStep] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { socket } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
 
   // For CSSTransition
   const nodeRef = useRef(null);
+
+  // Prefill pickup and destination if passed from Start or stored in localStorage
+  useEffect(() => {
+    if (location.state && location.state.pickup && location.state.destination) {
+      setPickup(location.state.pickup);
+      setDestination(location.state.destination);
+    } else {
+      const rideInput = localStorage.getItem('rideInput');
+      if (rideInput) {
+        const parsedInput = JSON.parse(rideInput);
+        setPickup(parsedInput.pickup || '');
+        setDestination(parsedInput.destination || '');
+        localStorage.removeItem('rideInput');
+      }
+    }
+  }, [location.state]);
 
   useEffect(() => {
     socket.emit('join', { userType: 'user', userId: user._id });
@@ -60,7 +77,7 @@ const Home = () => {
     };
   }, [socket, navigate]);
 
-  // button pannel
+  // Button panel functions
   const handlePickupChange = async (e) => {
     const inputValue = e.target.value;
     setPickup(inputValue);
@@ -103,7 +120,7 @@ const Home = () => {
     }
   };
 
-  //button pannel
+  // Button panel submission (if needed)
   const submitHandler = (e) => {
     e.preventDefault();
   };
@@ -149,7 +166,6 @@ const Home = () => {
 
   // Step 2: Confirm Ride created (once ConfirmRide finishes)
   const handleRideConfirmed = (rideData) => {
-    // We do NOT show success inside ConfirmRide. Instead:
     setRide(rideData);
     setCurrentStep('confirmed');
   };
@@ -174,12 +190,11 @@ const Home = () => {
     if (currentStep === 'vehicle') return 'input';
     if (currentStep === 'confirm') return 'vehicle';
     if (currentStep === 'confirmed') {
-      // If you want to allow going from "confirmed" → "input" directly:
       return 'input';
     }
     return null;
   };
-  // Button pannel
+
   const handleBack = () => {
     const prevStep = getPreviousStep();
     if (prevStep) {
@@ -189,7 +204,6 @@ const Home = () => {
   };
 
   const confirmBack = () => {
-    // If "confirmed" → "input", we basically reset
     if (currentStep === 'confirmed') {
       resetFlow();
     } else {
@@ -365,9 +379,8 @@ const Home = () => {
                   fare={fare}
                   vehicleType={vehicleType}
                   buttonDisabled={confirmSubmitting}
-                  // This callback will be triggered once ride is created & payment done
                   onConfirmRideSuccess={(rideData) => {
-                    handleRideConfirmed(rideData); // setCurrentStep('confirmed')
+                    handleRideConfirmed(rideData);
                   }}
                 />
               )}

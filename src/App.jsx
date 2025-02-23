@@ -25,7 +25,7 @@ import Payments from './pages/admin/Payments';
 import AdminProtectWrapper from './pages/admin/AdminProtectWrapper';
 import NotFoundPage from './pages/NotFoundPage';
 import 'remixicon/fonts/remixicon.css';
-
+import ContactPage from './pages/ContactPage';
 const App = () => {
   return (
     <div>
@@ -39,7 +39,7 @@ const App = () => {
         <Route path="/verify-email-otp" element={<VerifyEmailOTP />} />
         <Route path="/verify-mobile-otp" element={<VerifyMobileOTP />} />
         <Route path="/admin/login" element={<AdminLogin />} /> 
-
+        <Route path="/contact" element={<ContactPage />} />
         {/* User Protected Routes */}
         <Route
           path="/home"

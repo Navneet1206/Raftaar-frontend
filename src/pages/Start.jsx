@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Car, Shield, Clock, MapPin, Phone } from 'lucide-react';
 import Navbar from '../components/Landing/Navbar';
 import Input from '../components/Landing/Input';
@@ -13,8 +13,15 @@ import TestimonialCard from '../components/Landing/TestimonialCard';
 import FloatingBooking from '../components/Landing/FloatingBooking';
 import ScrollToTop from '../components/Landing/ScrollToTop';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 function Start() {
+  const navigate = useNavigate();
+
+  // State for ride input on the landing page
+  const [pickup, setPickup] = useState('');
+  const [destination, setDestination] = useState('');
+
   const services = [
     {
       title: "Premium Rides",
@@ -64,6 +71,20 @@ function Start() {
     }
   };
 
+  // When the form is submitted, check login status and redirect accordingly
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const rideInput = { pickup, destination };
+    if (localStorage.getItem('token')) {
+      // User is logged in: Navigate to the secure Home route, passing the input via state
+      navigate('/home', { state: rideInput });
+    } else {
+      // User is not logged in: Store the input temporarily and navigate to login/signup
+      localStorage.setItem('rideInput', JSON.stringify(rideInput));
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar onNavigate={scrollToSection} />
@@ -107,19 +128,23 @@ function Start() {
             <FadeInSection direction="right" delay={0.2}>
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
                 <h2 className="text-2xl font-bold text-white mb-6">Book Your Ride</h2>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                   <Input
+                    value={pickup}
+                    onChange={(e) => setPickup(e.target.value)}
                     placeholder="Pickup Location"
                     type="text"
                     className="bg-white/5 text-white placeholder:text-gray-400"
                   />
                   <Input
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
                     placeholder="Destination"
                     type="text"
                     className="bg-white/5 text-white placeholder:text-gray-400"
                   />
                   <motion.div whileHover={{ scale: 1.02 }}>
-                    <Button variant="primary" className="w-full">
+                    <Button variant="primary" className="w-full" type="submit">
                       Get Estimate
                     </Button>
                   </motion.div>
