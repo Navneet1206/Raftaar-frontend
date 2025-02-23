@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 const ConfirmRide = (props) => {
-  // Store selected dates as Date objects
-  const [rideDate, setRideDate] = useState(null);
-  const [rideTime, setRideTime] = useState(null);
+  const [rideDate, setRideDate] = useState("");
+  const [rideTime, setRideTime] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
@@ -27,20 +24,6 @@ const ConfirmRide = (props) => {
     }
   }, []);
 
-  // Format date to YYYY-MM-DD and time to HH:MM
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, "0");
-    const day = `${date.getDate()}`.padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  const formatTime = (date) => {
-    const hours = `${date.getHours()}`.padStart(2, "0");
-    const minutes = `${date.getMinutes()}`.padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
-
   const handleConfirmRide = async () => {
     if (!rideDate || !rideTime) {
       setShowValidationModal(true);
@@ -53,8 +36,8 @@ const ConfirmRide = (props) => {
       destination: props.destination,
       vehicleType: props.vehicleType,
       fare: props.fare[props.vehicleType],
-      rideDate: formatDate(rideDate),
-      rideTime: formatTime(rideTime),
+      rideDate,
+      rideTime,
       paymentType: paymentMethod,
     };
 
@@ -69,6 +52,7 @@ const ConfirmRide = (props) => {
 
       // Step 2: Payment
       if (paymentMethod === "online") {
+        // If script not loaded
         if (!window.Razorpay) {
           setErrorMessage(
             "Razorpay SDK failed to load. Please check your internet connection."
@@ -109,6 +93,7 @@ const ConfirmRide = (props) => {
     }
   };
 
+  // Step 3: Confirm the ride in backend
   const confirmRideAPI = async (rideId) => {
     try {
       await axios.post(
@@ -116,6 +101,7 @@ const ConfirmRide = (props) => {
         { rideId, paymentType: paymentMethod },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
+      // Instead of local success, call parent callback
       props.onConfirmRideSuccess && props.onConfirmRideSuccess({ rideId });
     } catch (error) {
       handleError(error);
@@ -228,13 +214,13 @@ const ConfirmRide = (props) => {
               <span className="absolute inset-y-0 left-0 flex items-center pl-2">
                 <FaCalendarAlt className="text-gray-500" />
               </span>
-              <ReactDatePicker
-                selected={rideDate}
-                onChange={(date) => setRideDate(date)}
-                minDate={new Date()}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Select ride date"
+              <input
                 className="border border-gray-300 pl-10 pr-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                type="date"
+                value={rideDate}
+                onChange={(e) => setRideDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+                required
               />
             </div>
           </div>
@@ -246,16 +232,12 @@ const ConfirmRide = (props) => {
               <span className="absolute inset-y-0 left-0 flex items-center pl-2">
                 <FaClock className="text-gray-500" />
               </span>
-              <ReactDatePicker
-                selected={rideTime}
-                onChange={(time) => setRideTime(time)}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={15}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                placeholderText="Select ride time"
+              <input
                 className="border border-gray-300 pl-10 pr-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                type="time"
+                value={rideTime}
+                onChange={(e) => setRideTime(e.target.value)}
+                required
               />
             </div>
           </div>
@@ -274,3 +256,4 @@ const ConfirmRide = (props) => {
 };
 
 export default ConfirmRide;
+x
