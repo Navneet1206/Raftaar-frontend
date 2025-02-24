@@ -138,14 +138,14 @@ function Start() {
                     onChange={(e) => setPickup(e.target.value)}
                     placeholder="Pickup Location"
                     type="text"
-                    className="bg-white/5 text-white placeholder:text-gray-400"
+                    className="bg-white text-black placeholder:text-gray-400"
                   />
                   <Input
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
                     placeholder="Destination"
                     type="text"
-                    className="bg-white/5 text-white placeholder:text-gray-400"
+                    className="bg-white text-black placeholder:text-gray-400"
                   />
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button variant="primary" className="w-full" type="submit">
