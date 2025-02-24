@@ -3,14 +3,13 @@ import 'remixicon/fonts/remixicon.css';
 import sedan from "../assets/sedan.png";
 import suv from "../assets/SUVcar.png";
 import hatchback from "../assets/hackback.png";
-import muv from "../assets/MUV.png";
+
 const VehiclePanel = (props) => {
-  // Vehicle types with their labels and updated static image URLs
+  // Vehicle types with their labels and updated static image URLs (MUV removed)
   const vehicleTypes = [
     {
       type: '4-seater hatchback',
       label: 'Hatchback',
-      // A reliable image link from Wikimedia
       image: hatchback,
       description: 'Affordable, compact rides',
       seatCount: 4
@@ -29,13 +28,6 @@ const VehiclePanel = (props) => {
       description: 'Spacious family ride',
       seatCount: 7
     },
-    {
-      type: '7-seater MUV',
-      label: 'MUV',
-      image: muv,
-      description: 'Large family carrier',
-      seatCount: 7
-    },
   ];
 
   return (
@@ -44,7 +36,6 @@ const VehiclePanel = (props) => {
       <h5
         className="p-1 text-center w-[93%] absolute top-0 cursor-pointer"
         onClick={() => {
-          // When user clicks the arrow, we close the vehicle panel
           props.setVehiclePanel(false);
         }}
       >
@@ -55,13 +46,7 @@ const VehiclePanel = (props) => {
 
       {/* Mapping through vehicle types to generate UI */}
       {vehicleTypes.map((vehicle, index) => {
-        // Grab numeric fare from the parent’s props
-        // If undefined, default to 0
         const backendFare = props.fare[vehicle.type] ?? 0;
-
-        // We'll simulate a discount by artificially inflating the backend fare
-        // and then showing a “strike-through” original price
-        // Example: 20% discount
         const discountPercentage = 20;
         const inflatedPrice = Math.round(
           backendFare * (100 + discountPercentage) / 100
@@ -98,7 +83,6 @@ const VehiclePanel = (props) => {
 
             {/* Fare & Offer Display */}
             <div className="text-right">
-              {/* Flipkart-style: Show strike-through “inflated” price, then actual discounted price */}
               <div className="flex items-center justify-end gap-2">
                 <span className="line-through text-gray-400 text-sm">
                   ₹{inflatedPrice}
@@ -107,7 +91,6 @@ const VehiclePanel = (props) => {
                   ₹{backendFare}
                 </span>
               </div>
-              {/* Show the discount percentage in green */}
               {backendFare > 0 && (
                 <p className="text-sm text-green-600 font-semibold">
                   {discountPercentage}% OFF

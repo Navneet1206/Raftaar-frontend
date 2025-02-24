@@ -37,7 +37,6 @@ const CaptainSignup = () => {
       const capacity = value === '4-seater hatchback' ? '4'
         : value === '4-seater sedan' ? '4'
         : value === '7-seater SUV' ? '7'
-        : value === '7-seater MUV' ? '7'
         : '';
       setFormData((prev) => ({
         ...prev,
@@ -304,7 +303,6 @@ const CaptainSignup = () => {
                   <option value="4-seater hatchback">Hatchback</option>
                   <option value="4-seater sedan">Sedan</option>
                   <option value="7-seater SUV">SUV</option>
-                  <option value="7-seater MUV">MUV</option>
                 </select>
               </div>
               <div>
