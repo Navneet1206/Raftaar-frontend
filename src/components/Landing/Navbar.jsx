@@ -33,7 +33,7 @@ const Navbar = ({ onNavigate }) => {
             onClick={() => onNavigate('top')}
             className="text-2xl font-bold text-white"
           >
-            Netwaycab
+            GatiYan
           </button>
           <nav className="hidden md:flex space-x-8">
             <Link to="/">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Car, Shield, Clock } from 'lucide-react';
 import Navbar from '../components/Landing/Navbar';
 import Input from '../components/Landing/Input';
@@ -14,13 +14,21 @@ import FloatingBooking from '../components/Landing/FloatingBooking';
 import ScrollToTop from '../components/Landing/ScrollToTop';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaLocationArrow } from 'react-icons/fa';
+import axios from 'axios';
+import LocationSearchPanel from '../components/LocationSearchPanel';
 
 function Start() {
   const navigate = useNavigate();
 
-  // State for ride input on the landing page
+  // Ride input states
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
+
+  // States for suggestions and active field
+  const [pickupSuggestions, setPickupSuggestions] = useState([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+  const [activeField, setActiveField] = useState(null);
 
   const services = [
     {
@@ -71,15 +79,86 @@ function Start() {
     }
   };
 
-  // When the form is submitted, check login status and redirect accordingly
+  // Fetch pickup suggestions as user types
+  const handlePickupChange = async (e) => {
+    const value = e.target.value;
+    setPickup(value);
+    if (value.length >= 3) {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+          {
+            params: { input: value },
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+        setPickupSuggestions(response.data);
+      } catch (error) {
+        console.error('Error fetching pickup suggestions:', error);
+      }
+    } else {
+      setPickupSuggestions([]);
+    }
+  };
+
+  // Fetch destination suggestions as user types
+  const handleDestinationChange = async (e) => {
+    const value = e.target.value;
+    setDestination(value);
+    if (value.length >= 3) {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+          {
+            params: { input: value },
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+        setDestinationSuggestions(response.data);
+      } catch (error) {
+        console.error('Error fetching destination suggestions:', error);
+      }
+    } else {
+      setDestinationSuggestions([]);
+    }
+  };
+
+  // Autofill pickup with current location using geolocation
+  const autofillPickup = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await axios.get(
+              `${import.meta.env.VITE_BASE_URL}/maps/get-coordinates`,
+              {
+                params: { address: `${latitude},${longitude}` },
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+              }
+            );
+            setPickup(response.data.formatted_address);
+          } catch (error) {
+            console.error('Error fetching coordinates:', error);
+          }
+        },
+        (error) => {
+          console.error('Error getting geolocation:', error.message);
+          alert('Unable to access your current location. Please enable location services.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
+
+  // On form submit, if user is logged in, pass input to Home; otherwise store input and navigate to login
   const handleSubmit = (e) => {
     e.preventDefault();
     const rideInput = { pickup, destination };
     if (localStorage.getItem('token')) {
-      // User is logged in: Navigate to the secure Home route, passing the input via state
       navigate('/home', { state: rideInput });
     } else {
-      // User is not logged in: Store the input temporarily and navigate to login/signup
       localStorage.setItem('rideInput', JSON.stringify(rideInput));
       navigate('/login');
     }
@@ -90,7 +169,7 @@ function Start() {
       <Navbar onNavigate={scrollToSection} />
       <FloatingBooking />
       <ScrollToTop />
-    
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center pt-16">
         <HeroBackground />
@@ -101,52 +180,77 @@ function Start() {
                 Your Premium Cab Service
               </h1>
               <p className="text-xl text-gray-300 mb-8">
-                Experience luxury and comfort with Netwaycab's premium ride service.
+                Experience luxury and comfort with Gatiyan's premium ride service.
               </p>
               <div className="flex gap-4">
                 <motion.div whileHover={{ scale: 1.05 }}>
-                 <Link to="/login">
-                  <Button 
-                    variant="primary" 
-                    size="lg"
-                    onClick={() => scrollToSection('services')}
-                  >
-                    Make Ride
-                  </Button>
-                    </Link>
+                  <Link to="/login">
+                    <Button variant="primary" size="lg" onClick={() => scrollToSection('services')}>
+                      Make Ride
+                    </Button>
+                  </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }}>
                   <Link to="/captain-login">
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    onClick={() => scrollToSection('contact')}
-                    >
-                    Join as Captain
-                  </Button>
-                    </Link>
+                    <Button variant="outline" size="lg" onClick={() => scrollToSection('contact')}>
+                      Join as Captain
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </FadeInSection>
-            
+
             <FadeInSection direction="right" delay={0.2}>
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
                 <h2 className="text-2xl font-bold text-white mb-6">Book Your Ride</h2>
                 <form className="space-y-4" onSubmit={handleSubmit}>
-                  <Input
-                    value={pickup}
-                    onChange={(e) => setPickup(e.target.value)}
-                    placeholder="Pickup Location"
-                    type="text"
-                    className="bg-white text-black placeholder:text-gray-400"
-                  />
-                  <Input
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    placeholder="Destination"
-                    type="text"
-                    className="bg-white text-black placeholder:text-gray-400"
-                  />
+                  {/* Pickup Field */}
+                  <div className="relative">
+                    <Input
+                      value={pickup}
+                      onChange={handlePickupChange}
+                      placeholder="Pickup Location"
+                      type="text"
+                      className="bg-white text-black placeholder:text-gray-400"
+                      onClick={() => setActiveField('pickup')}
+                    />
+                    <button
+                      type="button"
+                      onClick={autofillPickup}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black"
+                    >
+                      <FaLocationArrow className="text-xl" />
+                    </button>
+                    {activeField === 'pickup' && pickupSuggestions.length > 0 && (
+                      <LocationSearchPanel
+                        suggestions={pickupSuggestions}
+                        onSelect={(suggestion) => {
+                          setPickup(suggestion);
+                          setActiveField(null);
+                        }}
+                      />
+                    )}
+                  </div>
+                  {/* Destination Field */}
+                  <div className="relative">
+                    <Input
+                      value={destination}
+                      onChange={handleDestinationChange}
+                      placeholder="Destination"
+                      type="text"
+                      className="bg-white text-black placeholder:text-gray-400"
+                      onClick={() => setActiveField('destination')}
+                    />
+                    {activeField === 'destination' && destinationSuggestions.length > 0 && (
+                      <LocationSearchPanel
+                        suggestions={destinationSuggestions}
+                        onSelect={(suggestion) => {
+                          setDestination(suggestion);
+                          setActiveField(null);
+                        }}
+                      />
+                    )}
+                  </div>
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button variant="primary" className="w-full" type="submit">
                       Get Estimate
@@ -159,10 +263,8 @@ function Start() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <StatsSection />
 
-      {/* Services Section */}
       <AnimatedSection id="services" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <ParallaxSection>
@@ -172,17 +274,12 @@ function Start() {
           </ParallaxSection>
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <ServiceCard
-                key={index}
-                {...service}
-                delay={index * 0.2}
-              />
+              <ServiceCard key={index} {...service} delay={index * 0.2} />
             ))}
           </div>
         </div>
       </AnimatedSection>
 
-      {/* Testimonials Section */}
       <AnimatedSection className="py-20 bg-white">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <ParallaxSection>
@@ -200,56 +297,11 @@ function Start() {
         </div>
       </AnimatedSection>
 
-      {/* Contact Section */}
-      {/* <AnimatedSection id="contact" className="py-20 bg-gray-50">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-black rounded-2xl overflow-hidden">
-            <div className="grid md:grid-cols-2">
-              <FadeInSection direction="left" className="p-12 text-white">
-                <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
-                <p className="text-gray-300 mb-8">
-                  Have questions? We're here to help 24/7
-                </p>
-                <div className="space-y-4">
-                  <motion.div 
-                    className="flex items-center gap-3"
-                    whileHover={{ x: 10 }}
-                  >
-                    <Phone className="w-5 h-5" />
-                    <span>+1 (555) 123-4567</span>
-                  </motion.div>
-                  <motion.div 
-                    className="flex items-center gap-3"
-                    whileHover={{ x: 10 }}
-                  >
-                    <MapPin className="w-5 h-5" />
-                    <span>123 Business Avenue, City</span>
-                  </motion.div>
-                </div>
-              </FadeInSection>
-              <FadeInSection direction="right" className="bg-white p-12">
-                <form className="space-y-6">
-                  <Input label="Name" type="text" />
-                  <Input label="Email" type="email" />
-                  <Input label="Phone" type="tel" />
-                  <motion.div whileHover={{ scale: 1.02 }}>
-                    <Button variant="primary" className="w-full">
-                      Send Message
-                    </Button>
-                  </motion.div>
-                </form>
-              </FadeInSection>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection> */}
-
-      {/* Footer */}
       <footer className="bg-black text-white py-12">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <FadeInSection direction="up">
-              <h3 className="text-2xl font-bold mb-4">Netwaycab</h3>
+              <h3 className="text-2xl font-bold mb-4">Gatiyan</h3>
               <p className="text-gray-400">Your premium ride service</p>
             </FadeInSection>
             <FadeInSection direction="up" delay={0.1}>
@@ -318,7 +370,7 @@ function Start() {
             </FadeInSection>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2025 Netwaycab. All rights reserved.</p>
+            <p>&copy; 2025 Gatiyan. All rights reserved.</p>
           </div>
         </div>
       </footer>
