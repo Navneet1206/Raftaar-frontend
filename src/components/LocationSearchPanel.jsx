@@ -1,11 +1,14 @@
 import React from 'react';
 
 const LocationSearchPanel = ({ suggestions, onSelect }) => {
+  // Ensure suggestions is always an array
+  const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
+
   return (
     <>
       <div className="absolute left-0 right-0 text-black bg-white border border-gray-100 rounded shadow mt-1 max-h-60 overflow-y-auto z-50 animate-fade-in">
-        {suggestions.length > 0 ? (
-          suggestions.map((suggestion, index) => (
+        {safeSuggestions.length > 0 ? (
+          safeSuggestions.map((suggestion, index) => (
             <div
               key={index}
               className="p-2 transition-colors duration-200 hover:bg-gray-600 cursor-pointer"

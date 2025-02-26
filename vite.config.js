@@ -5,9 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/rides': 'http://localhost:3000',
-      '/captains': 'http://localhost:3000',
-      '/users': 'http://localhost:3000',
+      '/rides': 'https://raftaar-backend.vercel.app',
+      '/captains': 'https://raftaar-backend.vercel.app',
+      '/users': 'https://raftaar-backend.vercel.app',
+      '/socket.io': {
+        target:'https://raftaar-backend.vercel.app',
+        ws: true,
+      },
     },
   },
 });
