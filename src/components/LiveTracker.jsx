@@ -1,81 +1,89 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Map, Marker } from 'pigeon-maps';
+
+const fetchRoute = async (source, destination) => {
+  const start = `${source.lng},${source.ltd || source.lat}`;
+  const end = `${destination.lng},${destination.ltd || destination.lat}`;
+  // Use overview=full to get complete route geometry
+  const url = `https://router.project-osrm.org/route/v1/driving/${start};${end}?overview=full&geometries=geojson`;
+  console.log("OSRM URL:", url);
+  const response = await fetch(url);
+  const data = await response.json();
+  if (data.routes && data.routes.length > 0) {
+    // OSRM returns coordinates in [lng, lat] format; reverse them.
+    return data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+  } else {
+    throw new Error('No route found');
+  }
+};
 
 const LiveTracker = ({ sourceCoords, destinationCoords }) => {
-  const mapRef = useRef(null);
-  const [map, setMap] = useState(null);
-  const [directionsRenderer, setDirectionsRenderer] = useState(null);
-
-  // Load Google Maps API if not already loaded.
-  useEffect(() => {
-    if (window.google && window.google.maps) {
-      initializeMap();
-    } else {
-      const script = document.createElement('script');
-      // Ensure your API key is valid and has the required libraries: places, geometry, directions
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOMAPPRO_API_KEY}&libraries=places,geometry,directions`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => initializeMap();
-      document.body.appendChild(script);
-      return () => {
-        document.body.removeChild(script);
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const initializeMap = () => {
-    if (mapRef.current && !map) {
-      const initialCenter =
-        sourceCoords && (sourceCoords.ltd || sourceCoords.lat)
-          ? { lat: sourceCoords.ltd || sourceCoords.lat, lng: sourceCoords.lng }
-          : { lat: 0, lng: 0 };
-      const newMap = new window.google.maps.Map(mapRef.current, {
-        center: initialCenter,
-        zoom: 14,
-      });
-      const dr = new window.google.maps.DirectionsRenderer();
-      dr.setMap(newMap);
-      setMap(newMap);
-      setDirectionsRenderer(dr);
-    }
-  };
+  const [routeCoords, setRouteCoords] = useState([]);
 
   useEffect(() => {
-    if (!map || !directionsRenderer || !sourceCoords || !destinationCoords) return;
-    
-    const directionsService = new window.google.maps.DirectionsService();
-    const origin = new window.google.maps.LatLng(
-      sourceCoords.ltd || sourceCoords.lat,
-      sourceCoords.lng
-    );
-    const destination = new window.google.maps.LatLng(
-      destinationCoords.ltd || destinationCoords.lat,
-      destinationCoords.lng
-    );
-    const request = {
-      origin,
-      destination,
-      travelMode: window.google.maps.TravelMode.DRIVING,
-    };
+    if (sourceCoords && destinationCoords) {
+      fetchRoute(sourceCoords, destinationCoords)
+        .then(coords => {
+          console.log("Route coordinates:", coords);
+          setRouteCoords(coords);
+        })
+        .catch(err => console.error("Error fetching route:", err));
+    }
+  }, [sourceCoords, destinationCoords]);
 
-    directionsService.route(request, (result, status) => {
-      if (status === window.google.maps.DirectionsStatus.OK) {
-        directionsRenderer.setDirections(result);
-        // Fit the map bounds to the route.
-        if (result.routes && result.routes[0]) {
-          const bounds = new window.google.maps.LatLngBounds();
-          result.routes[0].overview_path.forEach((latLng) => bounds.extend(latLng));
-          map.fitBounds(bounds);
-        }
-      } else {
-        console.error("Directions request failed: " + status);
-      }
-    });
-  }, [sourceCoords, destinationCoords, map, directionsRenderer]);
+  // Use source coordinates for initial map center; fallback to [0,0]
+  const initialCenter =
+    sourceCoords && (sourceCoords.ltd || sourceCoords.lat)
+      ? [sourceCoords.ltd || sourceCoords.lat, sourceCoords.lng]
+      : [0, 0];
 
   return (
-    <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+      {/* Ensure the map has a defined height */}
+      <Map height={400} defaultCenter={initialCenter} defaultZoom={14}>
+        {({ width, height, latLngToPx }) => (
+          <>
+            {/* Source Marker */}
+            {sourceCoords && (
+              <Marker
+                anchor={[sourceCoords.ltd || sourceCoords.lat, sourceCoords.lng]}
+                payload={1}
+              />
+            )}
+            {/* Destination Marker */}
+            {destinationCoords && (
+              <Marker
+                anchor={[
+                  destinationCoords.ltd || destinationCoords.lat,
+                  destinationCoords.lng
+                ]}
+                payload={2}
+              />
+            )}
+            {/* Draw route polyline if coordinates exist */}
+            {routeCoords.length > 0 && (
+              <svg
+                width={width}
+                height={height}
+                style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+              >
+                <polyline
+                  points={routeCoords
+                    .map(coord => {
+                      const { x, y } = latLngToPx(coord);
+                      return `${x},${y}`;
+                    })
+                    .join(' ')}
+                  fill="none"
+                  stroke="blue"
+                  strokeWidth="4"
+                />
+              </svg>
+            )}
+          </>
+        )}
+      </Map>
+    </div>
   );
 };
 
