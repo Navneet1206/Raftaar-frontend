@@ -1,22 +1,19 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Car, Shield, Clock } from 'lucide-react';
 import Navbar from '../components/Landing/Navbar';
 import Input from '../components/Landing/Input';
 import Button from '../components/Landing/Button';
 import ServiceCard from '../components/Landing/ServiceCard';
-import AnimatedSection from '../components/Landing/AnimatedSection';
-import FadeInSection from '../components/Landing/FadeInSection';
-import ParallaxSection from '../components/Landing/ParallaxSection';
 import HeroBackground from '../components/Landing/HeroBackground';
 import StatsSection from '../components/Landing/StatsSection';
 import TestimonialCard from '../components/Landing/TestimonialCard';
 import FloatingBooking from '../components/Landing/FloatingBooking';
 import ScrollToTop from '../components/Landing/ScrollToTop';
-import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaLocationArrow } from 'react-icons/fa';
 import axios from 'axios';
 import LocationSearchPanel from '../components/LocationSearchPanel';
+
 function Start() {
   const navigate = useNavigate();
 
@@ -71,10 +68,11 @@ function Start() {
     }
   ];
 
+  // Scroll instantly without any animation
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'auto' });
     }
   };
 
@@ -174,32 +172,32 @@ function Start() {
         <HeroBackground />
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <FadeInSection direction="left">
+            <div>
               <h1 className="text-5xl font-bold text-white mb-6">
-               GatiYan Your Premium Cab Service
+                GatiYan Your Premium Cab Service
               </h1>
               <p className="text-xl text-gray-300 mb-8">
                 Experience luxury and comfort with Gatiyan's premium ride service.
               </p>
               <div className="flex gap-4">
-                <motion.div whileHover={{ scale: 1.05 }}>
+                <div>
                   <Link to="/login">
                     <Button variant="primary" size="lg" onClick={() => scrollToSection('services')}>
                       Make Ride
                     </Button>
                   </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }}>
+                </div>
+                <div>
                   <Link to="/captain-login">
                     <Button variant="outline" size="lg" onClick={() => scrollToSection('contact')}>
                       Join as Captain
                     </Button>
                   </Link>
-                </motion.div>
+                </div>
               </div>
-            </FadeInSection>
+            </div>
 
-            <FadeInSection direction="right" delay={0.2}>
+            <div>
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
                 <h2 className="text-2xl font-bold text-white mb-6">Book Your Ride</h2>
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -250,123 +248,110 @@ function Start() {
                       />
                     )}
                   </div>
-                  <motion.div whileHover={{ scale: 1.02 }}>
+                  <div>
                     <Button variant="primary" className="w-full" type="submit">
                       Get Estimate
                     </Button>
-                  </motion.div>
+                  </div>
                 </form>
               </div>
-            </FadeInSection>
+            </div>
           </div>
         </div>
       </section>
 
       <StatsSection />
 
-      <AnimatedSection id="services" className="py-20 bg-gray-50">
+      <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ParallaxSection>
-            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
-              Our Services
-            </h2>
-          </ParallaxSection>
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+            Our Services
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <ServiceCard key={index} {...service} delay={index * 0.2} />
             ))}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
-      <AnimatedSection className="py-20 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ParallaxSection>
-            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
-              What Our Clients Say
-            </h2>
-          </ParallaxSection>
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+            What Our Clients Say
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <FadeInSection key={index} direction="up" delay={index * 0.2}>
+              <div key={index}>
                 <TestimonialCard {...testimonial} />
-              </FadeInSection>
+              </div>
             ))}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       <footer className="bg-black text-white py-12">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
-            <FadeInSection direction="up">
+            <div>
               <h3 className="text-2xl font-bold mb-4">Gatiyan</h3>
               <p className="text-gray-400">Your premium ride service</p>
-            </FadeInSection>
-            <FadeInSection direction="up" delay={0.1}>
+            </div>
+            <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
-                <motion.li whileHover={{ x: 5 }}>
+                <li>
                   <button 
                     onClick={() => scrollToSection('services')}
                     className="text-gray-400 hover:text-white transition"
                   >
                     Services
                   </button>
-                </motion.li>
-                <motion.li whileHover={{ x: 5 }}>
+                </li>
+                <li>
                   <button 
                     onClick={() => scrollToSection('contact')}
                     className="text-gray-400 hover:text-white transition"
                   >
                     Contact
                   </button>
-                </motion.li>
+                </li>
               </ul>
-            </FadeInSection>
-            <FadeInSection direction="up" delay={0.2}>
+            </div>
+            <div>
               <h4 className="font-semibold mb-4">Services</h4>
               <ul className="space-y-2">
-                <motion.li whileHover={{ x: 5 }}>
+                <li>
                   <button className="text-gray-400 hover:text-white transition">
                     Premium Rides
                   </button>
-                </motion.li>
-                <motion.li whileHover={{ x: 5 }}>
+                </li>
+                <li>
                   <button className="text-gray-400 hover:text-white transition">
                     Airport Transfer
                   </button>
-                </motion.li>
-                <motion.li whileHover={{ x: 5 }}>
+                </li>
+                <li>
                   <button className="text-gray-400 hover:text-white transition">
                     Corporate Service
                   </button>
-                </motion.li>
+                </li>
               </ul>
-            </FadeInSection>
-            <FadeInSection direction="up" delay={0.3}>
+            </div>
+            <div>
               <h4 className="font-semibold mb-4">Follow Us</h4>
               <div className="flex space-x-4">
-                <motion.button 
-                  className="text-gray-400 hover:text-white transition"
-                  whileHover={{ y: -3 }}
-                >
+                <button className="text-gray-400 hover:text-white transition">
                   Twitter
-                </motion.button>
-                <motion.button 
-                  className="text-gray-400 hover:text-white transition"
-                  whileHover={{ y: -3 }}
-                >
+                </button>
+                <button className="text-gray-400 hover:text-white transition">
                   Facebook
-                </motion.button>
-                <motion.button 
-                  className="text-gray-400 hover:text-white transition"
-                  whileHover={{ y: -3 }}
-                >
+                </button>
+                <button className="text-gray-400 hover:text-white transition">
                   Instagram
-                </motion.button>
+                </button>
               </div>
-            </FadeInSection>
+            </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
             <p>&copy; 2025 Gatiyan. All rights reserved.</p>
