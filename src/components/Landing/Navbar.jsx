@@ -3,6 +3,8 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+import logo from '../../assets/bgremoved--logowhite-removebg-preview.png'
+
 const Navbar = ({ onNavigate }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -33,7 +35,11 @@ const Navbar = ({ onNavigate }) => {
             onClick={() => onNavigate('top')}
             className="text-2xl font-bold text-white"
           >
-            GatiYan
+             <img
+            className="w-26 h-12 mx-auto mb-4"
+            src= {logo}
+            alt="Logo"
+          />
           </button>
           <nav className="hidden md:flex space-x-8">
             <Link to="/">

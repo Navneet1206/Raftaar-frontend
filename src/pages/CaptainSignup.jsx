@@ -5,8 +5,10 @@ import { CaptainDataContext } from '../context/CapatainContext';
 import 'remixicon/fonts/remixicon.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import logo from '../assets/black--white--logoblack-removebg-preview.png'
 
 const CaptainSignup = () => {
+
   const navigate = useNavigate();
   const { setCaptain } = useContext(CaptainDataContext);
 
@@ -340,9 +342,15 @@ const CaptainSignup = () => {
       <ToastContainer />
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
+           <div className="flex items-center mb-4">
+                    <Link to="/captain-login" className="flex items-center text-black hover:underline">
+                      <i className="ri-arrow-left-line text-xl"></i>
+                      <span className="ml-2 text-xl font-bold">Back</span>
+                    </Link>
+                  </div>
           <img
-            className="w-20 mx-auto mb-4 animate-bounce"
-            src="https://www.svgrepo.com/show/505031/uber-driver.svg"
+            className="w-28 mx-auto mb-4 animate-bounce"
+            src={logo}
             alt="Captain Logo"
           />
           <h1 className="text-2xl font-bold text-black">Create Captain Account</h1>

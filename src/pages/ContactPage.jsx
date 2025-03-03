@@ -153,7 +153,7 @@ const ContactPage = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <h1 className="text-6xl font-bold tracking-wider animate-fade-in mb-4">
-              Contact Netway
+              Contact GatiYan
             </h1>
             <p className="text-xl text-gray-300 animate-fade-in-delayed">
               Your Trusted Travel Partner
@@ -266,7 +266,7 @@ const ContactPage = () => {
           isOpen={showSuccess}
           onClose={() => setShowSuccess(false)}
           title="Message Sent Successfully!"
-          description="Thank you for contacting Netway. Our team will get back to you within 24 hours."
+          description="Thank you for contacting GatiYan. Our team will get back to you within 24 hours."
           icon={<CheckCircle2 className="w-6 h-6" />}
           type="success"
         />

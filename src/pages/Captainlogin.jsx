@@ -5,6 +5,7 @@ import { CaptainDataContext } from '../context/CapatainContext';
 import { ClipLoader } from 'react-spinners'; // For loading spinner
 import { toast, ToastContainer } from 'react-toastify'; // For popup messages
 import 'react-toastify/dist/ReactToastify.css'; // CSS for toast notifications
+import logo from '../assets/black--white--logoblack-removebg-preview.png'
 
 const Captainlogin = () => {
   const [email, setEmail] = useState('');
@@ -63,9 +64,15 @@ const Captainlogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
+           <div className="flex items-center mb-4">
+                    <Link to="/" className="flex items-center text-black hover:underline">
+                      <i className="ri-arrow-left-line text-xl"></i>
+                      <span className="ml-2 text-xl font-bold">Home</span>
+                    </Link>
+                  </div>
           <img
-            className="w-20 mx-auto mb-4 animate-bounce"
-            src="https://www.svgrepo.com/show/505031/uber-driver.svg"
+            className="w-28 mx-auto mb-4 animate-bounce"
+            src={logo}
             alt="Captain Logo"
           />
           <h1 className="text-2xl font-bold text-black">Captain Login</h1>

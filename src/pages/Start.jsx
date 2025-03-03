@@ -17,7 +17,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaLocationArrow } from 'react-icons/fa';
 import axios from 'axios';
 import LocationSearchPanel from '../components/LocationSearchPanel';
-
 function Start() {
   const navigate = useNavigate();
 
@@ -177,7 +176,7 @@ function Start() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <FadeInSection direction="left">
               <h1 className="text-5xl font-bold text-white mb-6">
-                Your Premium Cab Service
+               GatiYan Your Premium Cab Service
               </h1>
               <p className="text-xl text-gray-300 mb-8">
                 Experience luxury and comfort with Gatiyan's premium ride service.

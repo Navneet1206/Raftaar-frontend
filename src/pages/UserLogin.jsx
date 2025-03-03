@@ -4,6 +4,7 @@ import { UserDataContext } from '../context/UserContext';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
+import logo from '../assets/black--white--logoblack-removebg-preview.png'
 import 'react-toastify/dist/ReactToastify.css';
 
 const UserLogin = () => {
@@ -57,9 +58,15 @@ const UserLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
+           <div className="flex items-center mb-4">
+                    <Link to="/" className="flex items-center text-black hover:underline">
+                      <i className="ri-arrow-left-line text-xl"></i>
+                      <span className="ml-2 text-xl font-bold">Home</span>
+                    </Link>
+                  </div>
           <img
-            className="w-16 mx-auto mb-4 animate-bounce"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYQy-OIkA6In0fTvVwZADPmFFibjmszu2A0g&s"
+            className="w-28 mx-auto mb-4 animate-bounce"
+            src= {logo}
             alt="Logo"
           />
           <h1 className="text-2xl font-bold text-black">User Login</h1>
