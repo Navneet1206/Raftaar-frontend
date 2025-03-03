@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,6 +9,7 @@ const VerifyMobileOTP = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [cooldown, setCooldown] = useState(0); // Tracks cooldown in seconds
 
   const handleChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
@@ -42,10 +43,10 @@ const VerifyMobileOTP = () => {
     const completeOtp = otp.join('');
     console.log('Submitting Mobile OTP:', completeOtp);
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/verify-mobile-otp`,
-        { mobileNumber, otp: completeOtp }
-      );
+      const endpoint = userType === 'captain'
+        ? `${import.meta.env.VITE_BACKEND_URL}/captains/verify-mobile-otp`
+        : `${import.meta.env.VITE_BACKEND_URL}/users/verify-mobile-otp`;
+      const response = await axios.post(endpoint, { mobileNumber, otp: completeOtp });
       console.log('Server Response:', response.data);
       setSuccess(response.data.message);
       setError('');
@@ -57,6 +58,40 @@ const VerifyMobileOTP = () => {
       setSuccess('');
     }
   };
+
+  const handleResend = async () => {
+    try {
+      const endpoint = userType === 'captain'
+        ? `${import.meta.env.VITE_BACKEND_URL}/captains/resend-otp`
+        : `${import.meta.env.VITE_BACKEND_URL}/users/resend-otp`;
+      const response = await axios.post(endpoint, { email, mobileNumber });
+      setSuccess(response.data.message);
+      setError('');
+      setCooldown(120); // Set 2-minute cooldown (120 seconds)
+    } catch (err) {
+      console.error('Error resending OTP:', err.response?.data || err.message);
+      const errorMsg = err.response?.data?.message || 'Failed to resend OTP. Please try again.';
+      setError(errorMsg);
+      setSuccess('');
+      if (err.response?.status === 429) {
+        // Extract remaining cooldown time from error message
+        const match = errorMsg.match(/wait (\d+) seconds/);
+        if (match) {
+          setCooldown(parseInt(match[1], 10));
+        }
+      }
+    }
+  };
+
+  // Handle cooldown timer
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setInterval(() => {
+        setCooldown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer); // Cleanup on unmount or cooldown change
+    }
+  }, [cooldown]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -98,6 +133,20 @@ const VerifyMobileOTP = () => {
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Verify
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={cooldown > 0}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                cooldown > 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+            >
+              {cooldown > 0 ? `Resend OTP in ${cooldown}s` : 'Resend OTP'}
             </button>
           </div>
         </form>

@@ -33,7 +33,19 @@ const UserLogin = () => {
         }, 2000);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      const errorMsg = error.response?.data?.message || 'Login failed. Please try again.';
+      toast.error(errorMsg);
+
+      // Handle unverified email/mobile scenario
+      if (error.response?.status === 401 && errorMsg.includes("verify your email")) {
+        const { email: responseEmail, mobileNumber } = error.response.data.user || {};
+        toast.info('Verification required. Redirecting to OTP verification...');
+        setTimeout(() => {
+          navigate('/verify-email-otp', {
+            state: { email: responseEmail || email, mobileNumber, userType: 'user' },
+          });
+        }, 2000);
+      }
     } finally {
       setLoading(false);
       setEmail('');

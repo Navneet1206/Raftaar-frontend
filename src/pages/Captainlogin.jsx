@@ -11,7 +11,7 @@ const Captainlogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
 
-  const { captain, setCaptain } = useContext(CaptainDataContext);
+  const { setCaptain } = useContext(CaptainDataContext);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
@@ -39,7 +39,19 @@ const Captainlogin = () => {
         }, 2000); // Redirect after 2 seconds
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.'); // Error popup
+      const errorMsg = error.response?.data?.message || 'Login failed. Please try again.';
+      toast.error(errorMsg); // Error popup
+
+      // Handle unverified email/mobile scenario
+      if (error.response?.status === 401 && errorMsg.includes("verify your email")) {
+        const { email: responseEmail, mobileNumber } = error.response.data.captain || {};
+        toast.info('Verification required. Redirecting to OTP verification...');
+        setTimeout(() => {
+          navigate('/verify-email-otp', {
+            state: { email: responseEmail || email, mobileNumber, userType: 'captain' },
+          });
+        }, 2000);
+      }
     } finally {
       setLoading(false); // Stop loading
       setEmail('');
