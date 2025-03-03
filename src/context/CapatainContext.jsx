@@ -17,19 +17,20 @@ const CaptainContext = ({ children }) => {
     const fetchCaptain = async () => {
       setIsLoading(true);
       setError(null);
-  
+
       const token = localStorage.getItem('token');
-      if (!token) {
+      if (!token || token === 'null') { // Explicitly check for null-like values
+        console.log('CaptainContext - No valid token found, skipping fetch');
         setError('Authentication token missing');
         setIsLoading(false);
         return;
       }
-  
+
       try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
+
         const data = await response.json();
         if (response.ok) {
           setCaptain(data.captain);
@@ -45,10 +46,9 @@ const CaptainContext = ({ children }) => {
         setIsLoading(false);
       }
     };
-  
+
     fetchCaptain();
   }, []);
-  
 
   const value = {
     captain,
