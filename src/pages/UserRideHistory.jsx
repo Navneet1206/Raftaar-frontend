@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../context/SocketContext";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaWallet, FaUser, FaSyncAlt } from "react-icons/fa";
@@ -14,7 +13,8 @@ const UserRideHistory = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
   const [refreshCooldown, setRefreshCooldown] = useState(0); // Cooldown in seconds
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRide, setSelectedRide] = useState(null);
 
   const statusTabs = [
     { key: "all", label: "All", color: "gray" },
@@ -89,6 +89,12 @@ const UserRideHistory = () => {
     return rides.filter((ride) => ride.status.toLowerCase() === activeTab);
   };
 
+  // Function to handle card click
+  const handleCardClick = (ride) => {
+    setSelectedRide(ride);
+    setShowModal(true);
+  };
+
   const renderRideCard = (ride) => (
     <motion.div
       key={ride._id}
@@ -96,7 +102,7 @@ const UserRideHistory = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      onClick={() => navigate(`/rides/${ride._id}`)}
+      onClick={() => handleCardClick(ride)}
     >
       <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800 truncate">
         {ride.pickup} to {ride.destination}
@@ -154,6 +160,34 @@ const UserRideHistory = () => {
     </motion.div>
   );
 
+  // Function to generate custom message based on ride status
+  const getStatusMessage = (ride) => {
+    if (!ride) return "";
+    const { status, pickup, destination, rideDate, rideTime } = ride;
+    let message = "";
+    switch (status.toLowerCase()) {
+      case "pending":
+        message = `Your ride from ${pickup} to ${destination} scheduled on ${rideDate} at ${rideTime} is currently pending. Please wait for confirmation.`;
+        break;
+      case "accepted":
+        message = `Great news! Your ride from ${pickup} to ${destination} scheduled on ${rideDate} at ${rideTime} has been accepted. Get ready!`;
+        break;
+      case "ongoing":
+        message = `Your ride from ${pickup} to ${destination} is in progress. Enjoy your journey and stay safe!`;
+        break;
+      case "completed":
+        message = `Thank you for riding with us! Your journey from ${pickup} to ${destination} on ${rideDate} at ${rideTime} has been completed successfully.`;
+        break;
+      case "cancelled":
+        message = `We regret to inform you that your ride from ${pickup} to ${destination} scheduled on ${rideDate} at ${rideTime} has been cancelled. Please contact support for further assistance.`;
+        break;
+      default:
+        message = `Your ride details: From ${pickup} to ${destination} on ${rideDate} at ${rideTime}.`;
+        break;
+    }
+    return message;
+  };
+
   return (
     <>
       <Usersnavbar />
@@ -172,12 +206,8 @@ const UserRideHistory = () => {
             >
               <FaSyncAlt className={`mr-2 ${refreshCooldown > 0 ? "" : "animate-spin-slow"}`} />
               {refreshCooldown > 0 ? `Refresh in ${refreshCooldown}s` : "Refresh"}
-              {/* Circular Progress Animation */}
               {refreshCooldown > 0 && (
-                <svg
-                  className="absolute inset-0 w-full h-full"
-                  viewBox="0 0 36 36"
-                >
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 36 36">
                   <circle
                     className="stroke-current text-blue-600"
                     cx="18"
@@ -244,7 +274,38 @@ const UserRideHistory = () => {
         </div>
       </div>
 
-      {/* Custom CSS for Animation */}
+      {/* Modal Popup */}
+      {showModal && selectedRide && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setShowModal(false)}
+          ></div>
+          <div className="bg-white rounded-lg shadow-xl z-10 max-w-lg mx-4 sm:mx-auto p-6 relative">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">
+              Ride Details
+            </h2>
+            <p className="text-gray-700 text-sm sm:text-base mb-4">
+              {getStatusMessage(selectedRide)}
+            </p>
+            <p className="text-gray-600 text-xs sm:text-sm mb-6">
+              {/* Small bit explanation of the ride */}
+              From <strong>{selectedRide.pickup}</strong> to{" "}
+              <strong>{selectedRide.destination}</strong> on{" "}
+              <strong>{selectedRide.rideDate}</strong> at{" "}
+              <strong>{selectedRide.rideTime}</strong>.
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Custom CSS for Animation and Scrollbar */}
       <style>{`
         .animate-spin-slow {
           animation: spin 2s linear infinite;
@@ -254,6 +315,17 @@ const UserRideHistory = () => {
         }
         .scrollbar-thumb-gray-400 {
           scrollbar-color: #9ca3af #e5e7eb;
+        }
+        @media (max-width: 640px) {
+          h1 {
+            font-size: 1.5rem;
+          }
+          h2 {
+            font-size: 1.75rem;
+          }
+          p {
+            font-size: 0.875rem;
+          }
         }
       `}</style>
     </>
