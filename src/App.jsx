@@ -23,6 +23,8 @@ import RideManagement from './pages/admin/RideManagement';
 import Payments from './pages/admin/Payments';
 import AdminProtectWrapper from './pages/admin/AdminProtectWrapper';
 import NotFoundPage from './pages/NotFoundPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import 'remixicon/fonts/remixicon.css';
 import ContactPage from './pages/ContactPage';
 const App = () => {
@@ -39,6 +41,9 @@ const App = () => {
         <Route path="/verify-mobile-otp" element={<VerifyMobileOTP />} />
         <Route path="/admin/login" element={<AdminLogin />} /> 
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword userType="user" />} />
+<Route path="/captain-forgot-password" element={<ForgotPassword userType="captain" />} />
+<Route path="/reset-password" element={<ResetPassword />} />
         {/* User Protected Routes */}
         <Route
           path="/home"

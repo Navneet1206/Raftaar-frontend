@@ -64,12 +64,12 @@ const Captainlogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-300">
         <div className="text-center mb-8">
-           <div className="flex items-center mb-4">
-                    <Link to="/" className="flex items-center text-black hover:underline">
-                      <i className="ri-arrow-left-line text-xl"></i>
-                      <span className="ml-2 text-xl font-bold">Home</span>
-                    </Link>
-                  </div>
+          <div className="flex items-center mb-4">
+            <Link to="/" className="flex items-center text-black hover:underline">
+              <i className="ri-arrow-left-line text-xl"></i>
+              <span className="ml-2 text-xl font-bold">Home</span>
+            </Link>
+          </div>
           <img
             className="w-28 mx-auto mb-4 animate-bounce"
             src={logo}
@@ -103,10 +103,16 @@ const Captainlogin = () => {
               className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-black transition duration-300"
             />
           </div>
+          <p className="text-center mt-6 text-gray-700">
+            Forgot your password?{" "}
+            <Link to="/captain-forgot-password" className="text-blue-500 hover:underline">
+              Reset here
+            </Link>
+          </p>
 
           <button
             type="submit"
-            disabled={loading} // Disable button when loading
+            disabled={loading} 
             className="w-full bg-black text-white font-semibold py-2 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center"
           >
             {loading ? (
