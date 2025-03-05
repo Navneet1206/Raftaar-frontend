@@ -3,7 +3,6 @@ import { Car, Shield, Clock } from 'lucide-react';
 import Navbar from '../components/Landing/Navbar';
 import Input from '../components/Landing/Input';
 import Button from '../components/Landing/Button';
-import ServiceCard from '../components/Landing/ServiceCard';
 import HeroBackground from '../components/Landing/HeroBackground';
 import StatsSection from '../components/Landing/StatsSection';
 import TestimonialCard from '../components/Landing/TestimonialCard';
@@ -26,45 +25,68 @@ function Start() {
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [activeField, setActiveField] = useState(null);
 
+  // State for FAQ toggle functionality: [q1, q2, q3]
+  const [faqOpen, setFaqOpen] = useState([false, false, false]);
+
+  // Redesigned Services data with icons and descriptive text
   const services = [
     {
       title: "Premium Rides",
       icon: Car,
-      description: "Luxury vehicles for comfortable travel"
+      description: "Experience luxury with our top-of-the-line vehicles and impeccable service. Travel in style and comfort every time."
     },
     {
       title: "Safe Journey",
       icon: Shield,
-      description: "Verified drivers and secure rides"
+      description: "Your safety is our priority. Our drivers are thoroughly vetted, and our vehicles are maintained with the highest standards."
     },
     {
-      title: "24/7 Service",
+      title: "24/7 Availability",
       icon: Clock,
-      description: "Available round the clock"
+      description: "No matter when you need us, our service is always on. We are available round the clock to cater to your transportation needs."
     }
   ];
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Harish Jain",
       role: "Business Executive",
       content: "The best cab service I've ever used. Professional drivers and luxurious cars.",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80",
+      image: "#",
       rating: 5
     },
     {
-      name: "Michael Chen",
+      name: "Meena Sharma",
       role: "Frequent Traveler",
       content: "Reliable and comfortable. My go-to choice for airport transfers.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80",
+      image: "#",
       rating: 5
     },
     {
-      name: "Emily Davis",
+      name: "Rahul Singh",
       role: "Corporate Client",
       content: "Exceptional service and attention to detail. Highly recommended!",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80",
+      image: "#",
       rating: 5
+    }
+  ];
+
+  // Dummy data for How It Works section
+  const howItWorks = [
+    {
+      step: "1",
+      title: "Book Your Ride",
+      description: "Enter your pickup and destination details, and get an instant estimate."
+    },
+    {
+      step: "2",
+      title: "Get Matched",
+      description: "Our system matches you with the best available driver in your area."
+    },
+    {
+      step: "3",
+      title: "Enjoy Your Trip",
+      description: "Relax and enjoy a safe, comfortable, and luxurious ride."
     }
   ];
 
@@ -161,6 +183,15 @@ function Start() {
     }
   };
 
+  // Toggle FAQ item at given index
+  const toggleFaq = (index) => {
+    setFaqOpen(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar onNavigate={scrollToSection} />
@@ -189,7 +220,7 @@ function Start() {
                 </div>
                 <div>
                   <Link to="/captain-login">
-                    <Button variant="outline" size="lg" onClick={() => scrollToSection('contact')}>
+                    <Button variant="outline" size="lg" onClick={() => scrollToSection('faq')}>
                       Join as Captain
                     </Button>
                   </Link>
@@ -262,20 +293,51 @@ function Start() {
 
       <StatsSection />
 
+      {/* Redesigned Services Section */}
       <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
             Our Services
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} delay={index * 0.2} />
+            {services.map((service, index) => {
+              const Icon = service.icon;
+              return (
+                <div key={index} className="bg-white rounded-xl shadow-lg p-8 transform transition hover:-translate-y-2 hover:shadow-2xl">
+                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mb-4">
+                    <Icon className="text-white" size={32} />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">{service.title}</h3>
+                  <p className="text-gray-600">{service.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-white">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+            How It Works
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((item, index) => (
+              <div key={index} className="text-center p-6 border rounded-lg hover:shadow-lg transition">
+                <div className="w-12 h-12 mx-auto rounded-full bg-blue-500 text-white flex items-center justify-center text-xl font-bold mb-4">
+                  {item.step}
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600">{item.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gray-100">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
             What Our Clients Say
@@ -290,6 +352,63 @@ function Start() {
         </div>
       </section>
 
+      {/* FAQ Section with Toggle Functionality */}
+      <section id="faq" className="py-20 bg-white">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-6 max-w-2xl mx-auto">
+            {/* FAQ Item 1 */}
+            <div className="border-b pb-4">
+              <button
+                onClick={() => toggleFaq(0)}
+                className="w-full text-left flex justify-between items-center text-2xl font-semibold"
+              >
+                <span>How do I book a ride?</span>
+                <span>{faqOpen[0] ? '-' : '+'}</span>
+              </button>
+              {faqOpen[0] && (
+                <p className="mt-2 text-gray-600">
+                  Simply enter your pickup and destination details in the booking form and click "Get Estimate" to start.
+                </p>
+              )}
+            </div>
+            {/* FAQ Item 2 */}
+            <div className="border-b pb-4">
+              <button
+                onClick={() => toggleFaq(1)}
+                className="w-full text-left flex justify-between items-center text-2xl font-semibold"
+              >
+                <span>Is my ride safe?</span>
+                <span>{faqOpen[1] ? '-' : '+'}</span>
+              </button>
+              {faqOpen[1] && (
+                <p className="mt-2 text-gray-600">
+                  Yes, all our drivers are verified and our vehicles are maintained to ensure a safe journey.
+                </p>
+              )}
+            </div>
+            {/* FAQ Item 3 */}
+            <div className="border-b pb-4">
+              <button
+                onClick={() => toggleFaq(2)}
+                className="w-full text-left flex justify-between items-center text-2xl font-semibold"
+              >
+                <span>Can I book rides in advance?</span>
+                <span>{faqOpen[2] ? '-' : '+'}</span>
+              </button>
+              {faqOpen[2] && (
+                <p className="mt-2 text-gray-600">
+          Yes, our system allows you to book rides in advance. Simply select your desired date and time, and we will take care of the rest.          
+               </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Section */}
       <footer className="bg-black text-white py-12">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
@@ -310,10 +429,18 @@ function Start() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => scrollToSection('contact')}
+                    onClick={() => scrollToSection('faq')}
                     className="text-gray-400 hover:text-white transition"
                   >
-                    Contact
+                    FAQ
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('how-it-works')}
+                    className="text-gray-400 hover:text-white transition"
+                  >
+                    How It Works
                   </button>
                 </li>
               </ul>

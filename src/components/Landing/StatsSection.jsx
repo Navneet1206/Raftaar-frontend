@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import FadeInSection from './FadeInSection';
 
 const stats = [
-  { label: 'Happy Customers', value: '10K+' },
-  { label: 'Cities', value: '50+' },
-  { label: 'Professional Drivers', value: '1000+' },
-  { label: 'Years of Service', value: '5+' },
+  { label: ' ', value: ' ' },
+  { label: ' ', value: ' ' },
+  { label: ' ', value: ' ' },
+  { label: ' ', value: ' ' },
 ];
 
 const StatsSection = () => {
