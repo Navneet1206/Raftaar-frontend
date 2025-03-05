@@ -27,6 +27,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import 'remixicon/fonts/remixicon.css';
 import ContactPage from './pages/ContactPage';
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage.jsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx';
 const App = () => {
   return (
     <div>
@@ -41,6 +43,8 @@ const App = () => {
         <Route path="/verify-mobile-otp" element={<VerifyMobileOTP />} />
         <Route path="/admin/login" element={<AdminLogin />} /> 
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/forgot-password" element={<ForgotPassword userType="user" />} />
 <Route path="/captain-forgot-password" element={<ForgotPassword userType="captain" />} />
 <Route path="/reset-password" element={<ResetPassword />} />

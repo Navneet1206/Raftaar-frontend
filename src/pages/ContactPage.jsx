@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import axios from 'axios'; // Using axios instead of fetch
 import { MapPin, Phone, Mail, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import Navbar from "../components/Landing/Navbar";
 
@@ -104,27 +105,34 @@ const ContactPage = () => {
     e.preventDefault();
 
     if (!validatePhone(formData.phone)) {
-      alert("Please enter a valid 10-digit Indian mobile number");
+      setShowError(true);
+      setTimeout(() => setShowError(false), 5000); // Auto-close error dialog after 5s
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/contact/submit`,
+        {
+          name: formData.name,
+          email: formData.email,
+          message: `${formData.message}\n\nPhone: ${formData.phone}` // Include phone in message
+        },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         setShowSuccess(true);
-        setFormData({ name: '', email: '', phone: '', message: '' });
-      } else {
-        setShowError(true);
+        setFormData({ name: '', email: '', phone: '', message: '' }); // Reset form
+        setTimeout(() => setShowSuccess(false), 5000); // Auto-close success dialog after 5s
       }
     } catch (error) {
       setShowError(true);
+      setTimeout(() => setShowError(false), 5000); // Auto-close error dialog after 5s
     } finally {
       setIsSubmitting(false);
     }
@@ -276,7 +284,7 @@ const ContactPage = () => {
           isOpen={showError}
           onClose={() => setShowError(false)}
           title="Message Not Sent"
-          description="There was an error sending your message. Please try again or contact us directly at +91 84350 61006."
+          description="There was an error sending your message or invalid phone number. Please try again or contact us directly at +91 84350 61006."
           icon={<XCircle className="w-6 h-6" />}
           type="error"
         />
