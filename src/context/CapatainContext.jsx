@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect } from 'react';
 
+// Named export for the context
 export const CaptainDataContext = createContext();
 
 const CaptainContext = ({ children }) => {
   const [captain, setCaptain] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Default to `true` as we are fetching on mount
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Function to manually update captain data
@@ -19,7 +20,7 @@ const CaptainContext = ({ children }) => {
       setError(null);
 
       const token = localStorage.getItem('token');
-      if (!token || token === 'null') { // Explicitly check for null-like values
+      if (!token || token === 'null') {
         console.log('CaptainContext - No valid token found, skipping fetch');
         setError('Authentication token missing');
         setIsLoading(false);
@@ -34,7 +35,7 @@ const CaptainContext = ({ children }) => {
         const data = await response.json();
         if (response.ok) {
           setCaptain(data.captain);
-          console.log('Captain data fetched:', data.captain); // Debug log
+          console.log('Captain data fetched:', data.captain);
         } else {
           setError(data.message || 'Failed to fetch captain data');
           console.error('Error fetching captain data:', data.message);

@@ -8,11 +8,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/rides': 'https://raftaar-backend.vercel.app',
-      '/captains': 'https://raftaar-backend.vercel.app',
-      '/users': 'https://raftaar-backend.vercel.app',
+      '/rides': 'http://localhost:3000',
+      '/captains': 'http://localhost:3000',
+      '/users': 'http://localhost:3000',
       '/socket.io': {
-        target:'https://raftaar-backend.vercel.app',
+        target:'http://127.0.0.1:3000',
         ws: true,
       },
     },

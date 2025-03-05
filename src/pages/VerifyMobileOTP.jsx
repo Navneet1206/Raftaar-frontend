@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,20 +11,27 @@ const VerifyMobileOTP = () => {
   const [success, setSuccess] = useState('');
   const [cooldown, setCooldown] = useState(0); // Tracks cooldown in seconds
 
+  // Create refs for each OTP input field
+  const inputRefs = useRef([]);
+
   const handleChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`);
-      if (nextInput) nextInput.focus();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        setTimeout(() => {
+          nextInput.focus();
+        }, 100);
+      }
     }
   };
 
   const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-input-${index - 1}`);
+      const prevInput = inputRefs.current[index - 1];
       if (prevInput) {
         prevInput.focus();
         const newOtp = [...otp];
@@ -89,7 +96,7 @@ const VerifyMobileOTP = () => {
       const timer = setInterval(() => {
         setCooldown((prev) => prev - 1);
       }, 1000);
-      return () => clearInterval(timer); // Cleanup on unmount or cooldown change
+      return () => clearInterval(timer);
     }
   }, [cooldown]);
 
@@ -107,9 +114,11 @@ const VerifyMobileOTP = () => {
             {otp.map((digit, index) => (
               <input
                 key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
                 id={`otp-input-${index}`}
                 type="text"
                 maxLength="1"
+                inputMode="numeric"
                 className="w-12 h-12 text-center text-xl font-semibold border-2 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}

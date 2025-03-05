@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { UserDataContext } from '../../context/UserContext'; // Use named export
+import { CaptainDataContext } from '../../context/CapatainContext'; // Use named export, fix typo in path if needed
 import logo from '../../assets/bgremoved--logowhite-removebg-preview.png';
 
 const Navbar = ({ onNavigate }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  // Get authentication states from contexts
+  const { user, setUser } = useContext(UserDataContext);
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+
+  // Check if anyone is logged in
+  const isLoggedIn = !!user || !!captain;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +31,19 @@ const Navbar = ({ onNavigate }) => {
     onNavigate(id);
   };
 
+  const handleLogout = () => {
+    // Clear localStorage and context based on user type
+    if (user) {
+      localStorage.removeItem('token');
+      setUser(null);
+    } else if (captain) {
+      localStorage.removeItem('token');
+      setCaptain(null);
+    }
+    setMenuOpen(false);
+    navigate('/');
+  };
+
   return (
     <motion.header
       className={`fixed w-full z-30 transition-all duration-300 ${
@@ -34,8 +56,10 @@ const Navbar = ({ onNavigate }) => {
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <button onClick={() => onNavigate('top')} className="text-2xl font-bold text-white">
-            <img className="w-26 h-12" src={logo} alt="Logo" />
+            <img className="w-24 h-12" src={logo} alt="Logo" />
           </button>
+
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/">
               <button
@@ -53,22 +77,37 @@ const Navbar = ({ onNavigate }) => {
                 Contact
               </button>
             </Link>
-            <Link to="/login">
-              <button className="text-gray-300 hover:text-white transition">
-                Login
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+              >
+                Logout
               </button>
-            </Link>
-            <Link to="/signup">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
-                Signup
-              </button>
-            </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <button className="text-gray-300 hover:text-white transition">
+                    Login
+                  </button>
+                </Link>
+                <Link to="/signup">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
+                    Signup
+                  </button>
+                </Link>
+              </>
+            )}
           </nav>
+
+          {/* Mobile Menu Toggle */}
           <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white">
             {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -78,7 +117,7 @@ const Navbar = ({ onNavigate }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <nav className="px-4 py-4 space-y-4 ">
+            <nav className="px-4 py-4 space-y-4">
               <Link to="/">
                 <button
                   onClick={() => handleNavClick('services')}
@@ -95,23 +134,33 @@ const Navbar = ({ onNavigate }) => {
                   Contact
                 </button>
               </Link>
-              <Link to="/login">
+              {isLoggedIn ? (
                 <button
-                  onClick={() => setMenuOpen(false)}
-                  className="block w-full text-left text-gray-300 hover:text-white transition mb-4 text-xl"
+                  onClick={handleLogout}
+                  className="block w-full text-left text-xl bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
                 >
-                  Login
+                  Logout
                 </button>
-              </Link>
-              <Link to="/signup">
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="block w-1/3 text-center text-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
-                >
-                  
-                  Signup
-                </button>
-              </Link>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <button
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full text-left text-gray-300 hover:text-white transition mb-4 text-xl"
+                    >
+                      Login
+                    </button>
+                  </Link>
+                  <Link to="/signup">
+                    <button
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full text-left text-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                    >
+                      Signup
+                    </button>
+                  </Link>
+                </>
+              )}
             </nav>
           </motion.div>
         )}

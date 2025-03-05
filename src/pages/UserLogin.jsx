@@ -4,12 +4,13 @@ import { UserDataContext } from '../context/UserContext';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
-import logo from '../assets/black--white--logoblack-removebg-preview.png'
+import logo from '../assets/black--white--logoblack-removebg-preview.png';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UserLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { setUser } = useContext(UserDataContext);
@@ -88,17 +89,29 @@ const UserLogin = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              required
-              type="password"
-              placeholder="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-black focus:border-black transition duration-300"
-            />
+            <div className="relative">
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-black focus:border-black transition duration-300"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-500"
+              >
+                {showPassword ? (
+                  <i className="ri-eye-off-line text-xl"></i>
+                ) : (
+                  <i className="ri-eye-line text-xl"></i>
+                )}
+              </span>
+            </div>
           </div>
           <p className="text-center mt-6 text-gray-700">
-            Forgot your password?{" "}
+            Forgot your password?{' '}
             <Link to="/forgot-password" className="text-blue-500 hover:underline">
               Reset here
             </Link>
