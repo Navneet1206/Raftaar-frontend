@@ -78,11 +78,11 @@ const Navbar = ({ onNavigate }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <nav className="px-4 py-4 space-y-4">
+            <nav className="px-4 py-4 space-y-4 ">
               <Link to="/">
                 <button
                   onClick={() => handleNavClick('services')}
-                  className="block w-full text-left text-gray-300 hover:text-white transition"
+                  className="block w-full text-left text-gray-300 hover:text-white transition mb-4 text-xl"
                 >
                   Services
                 </button>
@@ -90,7 +90,7 @@ const Navbar = ({ onNavigate }) => {
               <Link to="/contact">
                 <button
                   onClick={() => handleNavClick('contact')}
-                  className="block w-full text-left text-gray-300 hover:text-white transition"
+                  className="block w-full text-left text-gray-300 hover:text-white transition mb-4 text-xl"
                 >
                   Contact
                 </button>
@@ -98,7 +98,7 @@ const Navbar = ({ onNavigate }) => {
               <Link to="/login">
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="block w-full text-left text-gray-300 hover:text-white transition"
+                  className="block w-full text-left text-gray-300 hover:text-white transition mb-4 text-xl"
                 >
                   Login
                 </button>
@@ -106,8 +106,9 @@ const Navbar = ({ onNavigate }) => {
               <Link to="/signup">
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="block w-full text-left bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                  className="block w-1/3 text-center text-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
                 >
+                  
                   Signup
                 </button>
               </Link>
